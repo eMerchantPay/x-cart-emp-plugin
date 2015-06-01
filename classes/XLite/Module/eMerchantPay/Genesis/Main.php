@@ -55,7 +55,7 @@ abstract class Main extends \XLite\Module\AModule
      */
     public static function getMajorVersion()
     {
-        return '5.1';
+        return '5.2';
     }
 
     /**
@@ -65,17 +65,7 @@ abstract class Main extends \XLite\Module\AModule
      */
     public static function getMinorVersion()
     {
-        return '2';
-    }
-
-    /**
-     * Return link to settings form
-     *
-     * @return string
-     */
-    public static function getSettingsForm()
-    {
-        return null;
+        return '1';
     }
 
     /**

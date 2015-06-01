@@ -33,9 +33,7 @@ class TransactionTypes extends \XLite\View\FormField\Select\Multiple
      */
     protected function getDefaultOptions()
     {
-        if (!class_exists('\Genesis\Genesis', true)) {
-            include_once LC_DIR_MODULES . '/eMerchantPay/Genesis/Library/Genesis/vendor/autoload.php';
-        }
+        require_once LC_DIR_MODULES . '/eMerchantPay/Genesis/Library/Genesis/vendor/autoload.php';
 
         return array(
             \Genesis\API\Constants\Transaction\Types::AUTHORIZE     => static::t('Authorize'),

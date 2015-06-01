@@ -1,6 +1,4 @@
 <?php
-// vim: set ts=4 sw=4 sts=4 et:
-
 /*
  * Copyright (C) 2015 eMerchantPay Ltd.
  *
@@ -55,6 +53,11 @@ class eMerchantPayCheckout extends \XLite\Model\Payment\Base\Online
      * @var string
      */
     const REF_TKN = 'terminal_token';
+
+    /**
+     * Supported languages
+     */
+    private $supported_languages = array('en', 'es', 'fr', 'de', 'it', 'ja', 'zh', 'ar', 'pt', 'tr', 'ru', 'bg', 'hi');
 
     /**
      * Get allowed backend transactions
@@ -181,7 +184,8 @@ class eMerchantPayCheckout extends \XLite\Model\Payment\Base\Online
 
             $data = $this->collectInitialPaymentData();
 
-            $genesis->request()
+            $genesis
+                ->request()
                     ->setTransactionId($data['transaction_id'])
                     ->setAmount($data['amount'])
                     ->setCurrency($data['currency'])
@@ -212,6 +216,12 @@ class eMerchantPayCheckout extends \XLite\Model\Payment\Base\Online
 
             foreach ($data['transaction_types'] as $transaction_type) {
                 $genesis->request()->addTransactionType(trim($transaction_type));
+            }
+
+            if (in_array(\XLite\Core\Session::getInstance()->getLanguage()->getCode(), $this->supported_languages)) {
+                $genesis->request()->setLanguage(
+                    \XLite\Core\Session::getInstance()->getLanguage()->getCode()
+                );
             }
 
             $genesis->execute();
