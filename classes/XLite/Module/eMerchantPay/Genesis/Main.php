@@ -1,6 +1,4 @@
 <?php
-// vim: set ts=4 sw=4 sts=4 et:
-
 /*
  * Copyright (C) 2015 eMerchantPay Ltd.
  *
@@ -26,6 +24,9 @@ namespace XLite\Module\eMerchantPay\Genesis;
  */
 abstract class Main extends \XLite\Module\AModule
 {
+    /**
+     * Name of the eMerchantPay Checkout method
+     */
     const EMP_CHECKOUT = 'eMerchantPayCheckout';
 
     /**

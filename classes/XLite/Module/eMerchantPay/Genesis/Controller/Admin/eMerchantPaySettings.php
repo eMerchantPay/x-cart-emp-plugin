@@ -1,6 +1,4 @@
 <?php
-// vim: set ts=4 sw=4 sts=4 et:
-
 /*
  * Copyright (C) 2015 eMerchantPay Ltd.
  *
@@ -25,7 +23,7 @@ namespace XLite\Module\eMerchantPay\Genesis\Controller\Admin;
  *
  * @package XLite\Module\eMerchantPay\Genesis\Controller\Admin
  */
-class eMerchantPaySettings extends \XLite\Controller\Admin\AAdmin
+class EmerchantpaySettings extends \XLite\Controller\Admin\AAdmin
 {
     /**
      * Module Path
