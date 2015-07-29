@@ -28,6 +28,8 @@ namespace Genesis\API\Request\Financial\Alternatives;
  * Alternative payment method
  *
  * @package Genesis\API\Request\Financial\Alternatives
+ *
+ * @deprecated - iDEAL through SOFORT is going to be removed within the next major release
  */
 class SofortiDEAL extends \Genesis\API\Request
 {
@@ -314,7 +316,7 @@ class SofortiDEAL extends \Genesis\API\Request
                 'format'   => 'xml',
             ));
 
-        $this->setApiConfig('url', $this->buildRequestURL('gateway', 'process', true));
+        $this->setApiConfig('url', $this->buildRequestURL('gateway', 'process', \Genesis\Config::getToken()));
     }
 
     /**

@@ -215,7 +215,17 @@ class EMerchantPayCheckout extends \XLite\Model\Payment\Base\Online
                     ->setShippingCountry($data['shipping']['country']);
 
             foreach ($data['transaction_types'] as $transaction_type) {
-                $genesis->request()->addTransactionType(trim($transaction_type));
+                if (is_array($transaction_type)) {
+                    $genesis->request()->addTransactionType(
+                        $transaction_type['name'],
+                        $transaction_type['parameters']
+                    );
+                } else {
+                    $genesis->request()->addTransactionType(
+                        $transaction_type
+                    );
+                }
+
             }
 
             if (in_array(\XLite\Core\Session::getInstance()->getLanguage()->getCode(), $this->supported_languages)) {
@@ -942,14 +952,17 @@ HTML;
 
         if ($this->getSetting('transaction_types')) {
             $types = array(
-                'transaction_types' => json_decode(
-                    $this->getSetting('transaction_types')
-                )
+                'transaction_types' => $this->getCheckoutTransactionTypes()
             );
         } else {
             // Fallback to authorize
             $types = array(
-                'transaction_types' => array('authorize', 'sale', 'authorize3d', 'sale3d')
+                'transaction_types' => array(
+                    \Genesis\API\Constants\Transaction\Types::AUTHORIZE,
+                    \Genesis\API\Constants\Transaction\Types::AUTHORIZE_3D,
+                    \Genesis\API\Constants\Transaction\Types::SALE,
+                    \Genesis\API\Constants\Transaction\Types::SALE_3D
+                )
             );
         }
 
@@ -1102,6 +1115,55 @@ HTML;
     protected function getFormattedPrice($price)
     {
         return sprintf('%.2f', round((double)($price) + 0.00000000001, 2));
+    }
+
+    /**
+     * Get the selected Checkout transaction types
+     *
+     * @return array
+     */
+    protected function getCheckoutTransactionTypes()
+    {
+        $processed_list = array();
+
+        $selected_types = json_decode(
+            $this->getSetting('transaction_types')
+        );
+
+        $alias_map = array(
+            \Genesis\API\Constants\Payment\Methods::ELV         =>
+                \Genesis\API\Constants\Transaction\Types::PPRO,
+            \Genesis\API\Constants\Payment\Methods::EPS         =>
+                \Genesis\API\Constants\Transaction\Types::PPRO,
+            \Genesis\API\Constants\Payment\Methods::GIRO_PAY    =>
+                \Genesis\API\Constants\Transaction\Types::PPRO,
+            \Genesis\API\Constants\Payment\Methods::PRZELEWY24  =>
+                \Genesis\API\Constants\Transaction\Types::PPRO,
+            \Genesis\API\Constants\Payment\Methods::QIWI        =>
+                \Genesis\API\Constants\Transaction\Types::PPRO,
+            \Genesis\API\Constants\Payment\Methods::SAFETY_PAY  =>
+                \Genesis\API\Constants\Transaction\Types::PPRO,
+            \Genesis\API\Constants\Payment\Methods::TELEINGRESO =>
+                \Genesis\API\Constants\Transaction\Types::PPRO,
+            \Genesis\API\Constants\Payment\Methods::TRUST_PAY   =>
+                \Genesis\API\Constants\Transaction\Types::PPRO,
+        );
+
+        foreach ($selected_types as $selected_type) {
+            if (array_key_exists($selected_type, $alias_map)) {
+                $transaction_type = $alias_map[$selected_type];
+
+                $processed_list[$transaction_type]['name'] = $transaction_type;
+
+                $processed_list[$transaction_type]['parameters'][] = array(
+                    'payment_method' => $selected_type
+                );
+            } else {
+                $processed_list[] = $selected_type;
+            }
+        }
+
+        return $processed_list;
     }
 
     /**

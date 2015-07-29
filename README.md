@@ -1,7 +1,7 @@
 eMerchantPay Gateway Module for X-Cart
-===========================================
+======================================
 
-This is a Payment Module for eMerchantPay that gives you the ability to process payments through eMerchantPay's Payment Gateway - Genesis.
+This is a Payment Module for X-Cart, that gives you the ability to process payments through eMerchantPay's Payment Gateway - Genesis.
 
 Requirements
 ------------
@@ -24,7 +24,7 @@ GenesisPHP Requirements
 Installation
 ------------
 
-* Log into ```X-Cart Administration Area``` with your Administrator account 
+* Log into ```X-Cart Administration Area``` with your Administrator account
 * Navigate to ```Modules```
 * Install through the Marketplace OR click ```Upload add-on``` and select  ```.zip``` file you downloaded
 * Tick ```Enabled``` under the ```eMerchantPay``` plugin and click ```Save changes```

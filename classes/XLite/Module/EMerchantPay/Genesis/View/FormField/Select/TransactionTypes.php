@@ -24,6 +24,7 @@ namespace XLite\Module\EMerchantPay\Genesis\View\FormField\Select;
  */
 class TransactionTypes extends \XLite\View\FormField\Select\Multiple
 {
+
     /**
      * Get default options
      *
@@ -34,10 +35,40 @@ class TransactionTypes extends \XLite\View\FormField\Select\Multiple
         require_once LC_DIR_MODULES . '/EMerchantPay/Genesis/Library/Genesis/vendor/autoload.php';
 
         return array(
-            \Genesis\API\Constants\Transaction\Types::AUTHORIZE     => static::t('Authorize'),
-            \Genesis\API\Constants\Transaction\Types::AUTHORIZE_3D  => static::t('Authorize 3D'),
-            \Genesis\API\Constants\Transaction\Types::SALE          => static::t('Sale'),
-            \Genesis\API\Constants\Transaction\Types::SALE_3D       => static::t('Sale 3D')
+            \Genesis\API\Constants\Transaction\Types::ABNIDEAL      =>
+                static::t('ABN iDEAL'),
+            \Genesis\API\Constants\Transaction\Types::AUTHORIZE     =>
+                static::t('Authorize'),
+            \Genesis\API\Constants\Transaction\Types::AUTHORIZE_3D  =>
+                static::t('Authorize 3D'),
+            \Genesis\API\Constants\Transaction\Types::CASHU         =>
+                static::t('CashU'),
+            \Genesis\API\Constants\Payment\Methods::ELV             =>
+                static::t('ELV'),
+            \Genesis\API\Constants\Payment\Methods::EPS             =>
+                static::t('eps'),
+            \Genesis\API\Constants\Payment\Methods::GIRO_PAY        =>
+                static::t('GiroPay'),
+            \Genesis\API\Constants\Transaction\Types::NETELLER      =>
+                static::t('Neteller'),
+            \Genesis\API\Constants\Payment\Methods::QIWI            =>
+                static::t('Qiwi'),
+            \Genesis\API\Constants\Transaction\Types::PAYSAFECARD   =>
+                static::t('PaySafeCard'),
+            \Genesis\API\Constants\Payment\Methods::PRZELEWY24      =>
+                static::t('Przelewy24'),
+            \Genesis\API\Constants\Payment\Methods::SAFETY_PAY      =>
+                static::t('SafetyPay'),
+            \Genesis\API\Constants\Transaction\Types::SALE          =>
+                static::t('Sale'),
+            \Genesis\API\Constants\Transaction\Types::SALE_3D       =>
+                static::t('Sale 3D'),
+            \Genesis\API\Constants\Transaction\Types::SOFORT        =>
+                static::t('SOFORT'),
+            \Genesis\API\Constants\Payment\Methods::TELEINGRESO     =>
+                static::t('teleingreso'),
+            \Genesis\API\Constants\Payment\Methods::TRUST_PAY       =>
+                static::t('TrustPay')
         );
     }
 
