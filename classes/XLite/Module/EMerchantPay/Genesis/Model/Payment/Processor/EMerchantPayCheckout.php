@@ -745,8 +745,14 @@ class EMerchantPayCheckout extends \XLite\Model\Payment\Base\Online
             case \Genesis\API\Constants\Transaction\Types::AUTHORIZE_3D:
                 $status = \XLite\Model\Order\Status\Payment::STATUS_AUTHORIZED;
                 break;
+            case \Genesis\API\Constants\Transaction\Types::ABNIDEAL:
+            case \Genesis\API\Constants\Transaction\Types::CASHU:
+            case \Genesis\API\Constants\Transaction\Types::NETELLER:
+            case \Genesis\API\Constants\Transaction\Types::PAYSAFECARD:
+            case \Genesis\API\Constants\Transaction\Types::PPRO:
             case \Genesis\API\Constants\Transaction\Types::SALE:
             case \Genesis\API\Constants\Transaction\Types::SALE_3D:
+            case \Genesis\API\Constants\Transaction\Types::SOFORT:
                 $status = ($partialFlag)
                     ? \XLite\Model\Order\Status\Payment::STATUS_PART_PAID
                     : \XLite\Model\Order\Status\Payment::STATUS_PAID;
@@ -786,8 +792,14 @@ class EMerchantPayCheckout extends \XLite\Model\Payment\Base\Online
                     ? \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_CAPTURE_PART
                     : \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_CAPTURE;
                 break;
+            case \Genesis\API\Constants\Transaction\Types::ABNIDEAL:
+            case \Genesis\API\Constants\Transaction\Types::CASHU:
+            case \Genesis\API\Constants\Transaction\Types::NETELLER:
+            case \Genesis\API\Constants\Transaction\Types::PAYSAFECARD:
+            case \Genesis\API\Constants\Transaction\Types::PPRO:
             case \Genesis\API\Constants\Transaction\Types::SALE:
             case \Genesis\API\Constants\Transaction\Types::SALE_3D:
+            case \Genesis\API\Constants\Transaction\Types::SOFORT:
                 $status = \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_SALE;
                 break;
             case \Genesis\API\Constants\Transaction\Types::REFUND:
