@@ -53,10 +53,16 @@ class TransactionTypes extends \XLite\View\FormField\Select\Multiple
                 static::t('Neteller'),
             \Genesis\API\Constants\Payment\Methods::QIWI            =>
                 static::t('Qiwi'),
+            \Genesis\API\Constants\Transaction\Types::PAYBYVOUCHER_SALE   =>
+                static::t('PayByVoucher (Sale)'),
+            \Genesis\API\Constants\Transaction\Types::PAYBYVOUCHER_YEEPAY   =>
+                static::t('PayByVoucher (oBeP)'),
             \Genesis\API\Constants\Transaction\Types::PAYSAFECARD   =>
                 static::t('PaySafeCard'),
             \Genesis\API\Constants\Payment\Methods::PRZELEWY24      =>
                 static::t('Przelewy24'),
+            \Genesis\API\Constants\Transaction\Types::POLI          =>
+                static::t('POLi'),
             \Genesis\API\Constants\Payment\Methods::SAFETY_PAY      =>
                 static::t('SafetyPay'),
             \Genesis\API\Constants\Transaction\Types::SALE          =>
@@ -68,7 +74,9 @@ class TransactionTypes extends \XLite\View\FormField\Select\Multiple
             \Genesis\API\Constants\Payment\Methods::TELEINGRESO     =>
                 static::t('teleingreso'),
             \Genesis\API\Constants\Payment\Methods::TRUST_PAY       =>
-                static::t('TrustPay')
+                static::t('TrustPay'),
+            \Genesis\API\Constants\Transaction\Types::WEBMONEY        =>
+                static::t('WebMoney')
         );
     }
 
