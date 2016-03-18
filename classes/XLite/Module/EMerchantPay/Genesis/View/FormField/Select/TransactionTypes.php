@@ -43,8 +43,6 @@ class TransactionTypes extends \XLite\View\FormField\Select\Multiple
                 static::t('Authorize 3D'),
             \Genesis\API\Constants\Transaction\Types::CASHU         =>
                 static::t('CashU'),
-            \Genesis\API\Constants\Payment\Methods::ELV             =>
-                static::t('ELV'),
             \Genesis\API\Constants\Payment\Methods::EPS             =>
                 static::t('eps'),
             \Genesis\API\Constants\Payment\Methods::GIRO_PAY        =>
