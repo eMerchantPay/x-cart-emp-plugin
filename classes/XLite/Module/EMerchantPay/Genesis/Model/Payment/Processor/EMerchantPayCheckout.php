@@ -1143,8 +1143,6 @@ HTML;
         );
 
         $alias_map = array(
-            \Genesis\API\Constants\Payment\Methods::ELV         =>
-                \Genesis\API\Constants\Transaction\Types::PPRO,
             \Genesis\API\Constants\Payment\Methods::EPS         =>
                 \Genesis\API\Constants\Transaction\Types::PPRO,
             \Genesis\API\Constants\Payment\Methods::GIRO_PAY    =>
@@ -1176,6 +1174,11 @@ HTML;
         }
 
         return $processed_list;
+    }
+
+    public function getCheckoutTemplate(\XLite\Model\Payment\Method $method)
+    {
+        return 'modules/EMerchantPay/Genesis/checkout/emerchantpayCheckout.tpl';
     }
 
     /**
