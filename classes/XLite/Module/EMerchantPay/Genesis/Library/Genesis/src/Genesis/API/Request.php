@@ -401,7 +401,12 @@ abstract class Request
         $path     = ($token) ? sprintf('%s/%s/', $path, $token) : $path;
 
         return sprintf(
-            '%s://%s%s:%s/%s', $protocol, $sub, $domain, $port, $path
+            '%s://%s%s:%s/%s',
+            $protocol,
+            $sub,
+            $domain,
+            $port,
+            $path
         );
     }
 
