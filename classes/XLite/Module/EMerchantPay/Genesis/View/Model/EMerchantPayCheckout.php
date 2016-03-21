@@ -70,7 +70,7 @@ class EMerchantPayCheckout extends \XLite\View\Model\AModel
             self::SCHEMA_LABEL    => 'Order id prefix',
             // @codingStandardsIgnoreStart
             self::SCHEMA_HELP     =>
-                'You can define an order id prefix, which would precede each order number in your shop, to make it unique',
+                'You can define a prefix to each order to identify them easily in your shop',
             // @codingStandardsIgnoreEnd
             self::SCHEMA_REQUIRED => false,
         ),
