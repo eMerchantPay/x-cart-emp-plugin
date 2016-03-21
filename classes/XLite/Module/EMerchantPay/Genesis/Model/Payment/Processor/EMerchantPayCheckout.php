@@ -1176,6 +1176,11 @@ HTML;
         return $processed_list;
     }
 
+    public function getCheckoutTemplate(\XLite\Model\Payment\Method $method)
+    {
+        return 'modules/EMerchantPay/Genesis/checkout/emerchantpayCheckout.tpl';
+    }
+
     /**
      * Load Genesis library
      *
