@@ -1,5 +1,5 @@
 {**
- * eMerchantPay settings
+ * eMerchantPay Checkout Template
  *
  * Copyright (C) 2016 eMerchantPay Ltd.
  *
