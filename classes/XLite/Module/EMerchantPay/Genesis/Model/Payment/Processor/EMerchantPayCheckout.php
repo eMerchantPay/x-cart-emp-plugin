@@ -1176,6 +1176,13 @@ HTML;
         return $processed_list;
     }
 
+    /**
+     * Get the Checkout Template Path
+     *
+     * $param \XLite\Model\Payment\Method $method
+     *
+     * @return string
+     */
     public function getCheckoutTemplate(\XLite\Model\Payment\Method $method)
     {
         return 'modules/EMerchantPay/Genesis/checkout/emerchantpayCheckout.tpl';
@@ -1201,14 +1208,16 @@ HTML;
         }
 
         // Endpoint
-        \Genesis\Config::setEndpoint('emerchantpay');
+        \Genesis\Config::setEndpoint(\Genesis\API\Constants\Endpoints::EMERCHANTPAY);
         // Username
         \Genesis\Config::setUsername($this->getSetting('username'));
         // Password
         \Genesis\Config::setPassword($this->getSetting('secret'));
         // Environment
         \Genesis\Config::setEnvironment(
-            $this->isTestMode($this->transaction->getPaymentMethod()) ? 'sandbox' : 'production'
+            $this->isTestMode($this->transaction->getPaymentMethod()) ?
+                \Genesis\API\Constants\Environments::STAGING :
+                \Genesis\API\Constants\Environments::PRODUCTION
         );
     }
 
