@@ -82,15 +82,6 @@ class Create extends \Genesis\API\Request
     protected $customer_phone;
 
     /**
-     * Card Holder
-     *
-     * Note: required only for PayByVoucher
-     *
-     * @var string
-     */
-    protected $card_holder;
-
-    /**
      * URL endpoint for Genesis Notifications
      *
      * @var string
@@ -379,12 +370,14 @@ class Create extends \Genesis\API\Request
      */
     protected function initConfiguration()
     {
-        $this->config = \Genesis\Utils\Common::createArrayObject(array(
+        $this->config = \Genesis\Utils\Common::createArrayObject(
+            array(
                 'protocol' => 'https',
                 'port'     => 443,
                 'type'     => 'POST',
                 'format'   => 'xml',
-            ));
+            )
+        );
 
         $this->setApiConfig('url', $this->buildRequestURL('wpf', 'wpf', false));
     }
@@ -433,7 +426,6 @@ class Create extends \Genesis\API\Request
                 'description'        => $this->description,
                 'customer_email'     => $this->customer_email,
                 'customer_phone'     => $this->customer_phone,
-                'card_holder'        => $this->card_holder,
                 'notification_url'   => $this->notification_url,
                 'return_success_url' => $this->return_success_url,
                 'return_failure_url' => $this->return_failure_url,
