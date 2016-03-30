@@ -442,6 +442,10 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
                     null,
                     static::FAILED
                 );
+
+                \XLite\Core\TopMessage::getInstance()->addError(
+                    static::t('Payment unsuccessful!')
+                );
             }
         }
 
