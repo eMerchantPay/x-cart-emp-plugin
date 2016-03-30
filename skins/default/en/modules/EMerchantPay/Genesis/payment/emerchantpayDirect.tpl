@@ -71,9 +71,3 @@
     </div>
   </div>
 </div>
-
-<style type="text/css">
-
-
-
-</style>

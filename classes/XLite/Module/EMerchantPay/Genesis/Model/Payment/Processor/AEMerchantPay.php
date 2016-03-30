@@ -224,15 +224,16 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
             // Genesis Request
             $capture = new \Genesis\Genesis('Financial\Capture');
 
-            $capture->request()
-                ->setTransactionId(md5(microtime()))
-                ->setReferenceId($this->getRefId($transaction))
-                ->setRemoteIp($this->getClientIP())
-                ->setUsage(self::TXN_USG)
-                ->setAmount($this->getFormattedPrice($transaction->getValue()))
-                ->setCurrency(
-                    $transaction->getPaymentTransaction()->getOrder()->getCurrency()->getCode()
-                );
+            $capture
+                ->request()
+                    ->setTransactionId(md5(microtime()))
+                    ->setReferenceId($this->getRefId($transaction))
+                    ->setRemoteIp($this->getClientIP())
+                    ->setUsage(self::TXN_USG)
+                    ->setAmount($this->getFormattedPrice($transaction->getValue()))
+                    ->setCurrency(
+                        $transaction->getPaymentTransaction()->getOrder()->getCurrency()->getCode()
+                    );
 
             $capture->execute();
 
@@ -295,13 +296,14 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
         try {
             $refund = new \Genesis\Genesis('Financial\Refund');
 
-            $refund->request()
-                ->setTransactionId(md5(time()))
-                ->setReferenceId($this->getRefId($transaction))
-                ->setRemoteIp($this->getClientIP())
-                ->setUsage(self::TXN_USG)
-                ->setAmount($this->getFormattedPrice($transaction->getValue()))
-                ->setCurrency($transaction->getPaymentTransaction()->getOrder()->getCurrency()->getCode());
+            $refund
+                ->request()
+                    ->setTransactionId(md5(time()))
+                    ->setReferenceId($this->getRefId($transaction))
+                    ->setRemoteIp($this->getClientIP())
+                    ->setUsage(self::TXN_USG)
+                    ->setAmount($this->getFormattedPrice($transaction->getValue()))
+                    ->setCurrency($transaction->getPaymentTransaction()->getOrder()->getCurrency()->getCode());
 
             $refund->execute();
 
@@ -365,11 +367,12 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
         try {
             $void = new \Genesis\Genesis('Financial\Void');
 
-            $void->request()
-                ->setTransactionId(md5(time()))
-                ->setReferenceId($this->getRefId($transaction))
-                ->setRemoteIp($this->getClientIP())
-                ->setUsage(self::TXN_USG);
+            $void
+                ->request()
+                    ->setTransactionId(md5(time()))
+                    ->setReferenceId($this->getRefId($transaction))
+                    ->setRemoteIp($this->getClientIP())
+                    ->setUsage(self::TXN_USG);
 
             $void->execute();
 
