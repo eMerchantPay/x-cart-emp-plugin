@@ -1,5 +1,6 @@
-<?php
-/*
+{**
+ * eMerchantPayDirect Payment Widget
+ *
  * Copyright (C) 2016 eMerchantPay Ltd.
  *
  * This program is free software; you can redistribute it and/or
@@ -15,30 +16,6 @@
  * @author      eMerchantPay
  * @copyright   2016 eMerchantPay Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
- */
+ *}
 
-namespace XLite\Module\EMerchantPay\Genesis\View\Menu\Admin;
-
-/**
- * Add eMerchantPay to the menu
- */
-abstract class AAdmin extends \XLite\View\Menu\Admin\AAdmin implements \XLite\Base\IDecorator
-{
-    /**
-     * Returns the list of related targets
-     *
-     * @param string $target Target name
-     *
-     * @return array
-     */
-    public function getRelatedTargets($target)
-    {
-        $targets = parent::getRelatedTargets($target);
-
-        if ('payment_settings' == $target) {
-            $targets[] = 'emerchantpay_settings';
-        }
-
-        return $targets;
-    }
-}
+<widget class="XLite\Module\EMerchantPay\Genesis\View\Checkout\DirectPaymentView" />

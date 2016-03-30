@@ -1,5 +1,5 @@
 {**
- * eMerchantPay Checkout Template
+ * eMerchantPayCheckout Template
  *
  * Copyright (C) 2016 eMerchantPay Ltd.
  *
@@ -18,7 +18,8 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  *}
 
-<img class="emerchantpay-checkout-logo" src="images/../modules/EMerchantPay/Genesis/checkout/emerchantpay_checkout.png" alt="{method.getName()}" title="{method.getName()}" />
+<span class="payment-title">{getMethodCheckoutLabel(method)}</span>
+<img class="emerchantpay-checkout-logo" src="images/../modules/EMerchantPay/Genesis/images/emerchantpay_checkout.png" alt="{method.getName()}" title="{method.getName()}" />
 <div IF="method.getDescription()" class="payment-description emerchantpay-payment-description">{method.getDescription()}</div>
 
 <style type="text/css">

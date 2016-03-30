@@ -17,28 +17,20 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace XLite\Module\EMerchantPay\Genesis\View\Menu\Admin;
+namespace XLite\Module\EMerchantPay\Genesis\View\Checkout;
 
 /**
- * Add eMerchantPay to the menu
+ * Transparent redirect widget
  */
-abstract class AAdmin extends \XLite\View\Menu\Admin\AAdmin implements \XLite\Base\IDecorator
+class DirectPaymentView extends \XLite\View\AView
 {
     /**
-     * Returns the list of related targets
+     * Return widget default template
      *
-     * @param string $target Target name
-     *
-     * @return array
+     * @return string
      */
-    public function getRelatedTargets($target)
+    protected function getDefaultTemplate()
     {
-        $targets = parent::getRelatedTargets($target);
-
-        if ('payment_settings' == $target) {
-            $targets[] = 'emerchantpay_settings';
-        }
-
-        return $targets;
+        return 'modules/EMerchantPay/Genesis/payment/emerchantpayDirect.tpl';
     }
 }

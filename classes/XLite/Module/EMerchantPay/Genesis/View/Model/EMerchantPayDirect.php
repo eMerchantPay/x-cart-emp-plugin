@@ -22,7 +22,7 @@ namespace XLite\Module\EMerchantPay\Genesis\View\Model;
 /**
  * Settings Page Definition
  */
-class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\View\Model\AEMerchantPay
+class EMerchantPayDirect extends \XLite\Module\EMerchantPay\Genesis\View\Model\AEMerchantPay
 {
 
     /**
@@ -35,13 +35,19 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\View\Model
     {
         parent::__construct($params, $sections);
 
-        $this->schemaAdditional['transaction_types'] = array(
-            self::SCHEMA_CLASS    =>
-                '\XLite\Module\EMerchantPay\Genesis\View\FormField\Checkout\Select\TransactionTypes',
-            self::SCHEMA_LABEL    => 'Transaction types',
+        $this->schemaAccount['token'] = array(
+                self::SCHEMA_CLASS    => '\XLite\View\FormField\Input\Text',
+                self::SCHEMA_LABEL    => 'Token',
+                self::SCHEMA_HELP     => 'Token of your Genesis account.',
+                self::SCHEMA_REQUIRED => true
+        );
+
+        $this->schemaAdditional['transaction_type'] = array(
+            self::SCHEMA_CLASS    => '\XLite\Module\EMerchantPay\Genesis\View\FormField\Direct\Select\TransactionType',
+            self::SCHEMA_LABEL    => 'Transaction type',
             self::SCHEMA_HELP     =>
                 'You can select which transaction types can be attempted (from the Gateway) upon customer processing',
-            self::SCHEMA_REQUIRED => true,
+            self::SCHEMA_REQUIRED => true
         );
     }
 }
