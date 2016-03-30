@@ -8,6 +8,7 @@ Requirements
 
 * X-Cart 5.2.x (you can get this plugin to work on older 5.X versions simply by tweaking ```Main.php```)
 * [GenesisPHP v1.4](https://github.com/GenesisGateway/genesis_php) - (Integrated in Module)
+* PCI-certified server in order to use ```eMerchantPay Direct```
 
 GenesisPHP Requirements
 ------------
@@ -32,6 +33,8 @@ Installation
 * Under ```Online methods``` category, click ```Add payment method``` and select ```eMerchantPay``` from the list
 * Enter your credentials and configure the plugin to your liking
 * Go back to ```Store setup -> Payment methods``` and toggle the ```eMerchantPay``` payment method from ```INACTIVE``` to ```ACTIVE```
+* If you wish to use ```eMerchantPay Direct```, the SSL of the Front Store must be enabled. 
+If you have already configured a SSL Certificate, go to ```System settings``` -> ```HTTPS settings``` and click ```Enable HTTPS``` in order to be able to process direct payment transactions through our gateway
 
 Installation (Manual)
 ------------
@@ -44,6 +47,8 @@ Installation (Manual)
 * Under ```Online methods``` category, click ```Add payment method``` and select ```eMerchantPay``` from the list
 * Enter your credentials and configure the plugin to your liking
 * Go back to ```Store setup -> Payment methods``` and toggle the ```eMerchantPay``` payment method from ```INACTIVE``` to ```ACTIVE```
+* If you wish to use ```eMerchantPay Direct```, the SSL of the Front Store must be enabled. 
+If you have already configured a SSL Certificate, go to ```System settings``` -> ```HTTPS settings``` and click ```Enable HTTPS``` in order to be able to process direct payment transactions through our gateway
 
 _Note_: If you have trouble with your credentials or terminal configuration, get in touch with our [support] team
 
