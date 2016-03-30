@@ -17,43 +17,42 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace XLite\Module\EMerchantPay\Genesis\View\Form;
+namespace XLite\Module\EMerchantPay\Genesis\View\Checkout;
 
 /**
- * eMerchantPay Settings Form
+ * Payment template
  */
-class Settings extends \XLite\View\Form\AForm
+abstract class Payment extends \XLite\View\Checkout\Payment implements \XLite\Base\IDecorator
 {
     /**
-     * Get default target field value
-     *
-     * @return string
-     */
-    protected function getDefaultTarget()
-    {
-        return 'emerchantpay_settings';
-    }
-
-    /**
-     * Get default action field value
-     *
-     * @return string
-     */
-    protected function getDefaultAction()
-    {
-        return 'update';
-    }
-
-    /**
-     * Required form parameters
+     * Get JS files
      *
      * @return array
      */
-    protected function getCommonFormParams()
+    public function getJSFiles()
     {
-        $list = parent::getCommonFormParams();
+        $list = parent::getJSFiles();
 
-        $list['method_id'] = \XLite\Core\Request::getInstance()->method_id;
+        $method = \XLite\Core\Database::getRepo('XLite\Model\Payment\Method')
+            ->findOneBy(array('service_name' => 'EMerchantPayDirect'));
+        if ($method && $method->isEnabled()) {
+            $list[] = 'modules/EMerchantPay/Genesis/js/direct/card.min.js';
+            $list[] = 'modules/EMerchantPay/Genesis/js/direct/payment.js';
+        }
+
+        return $list;
+    }
+
+    /**
+     * Register CSS files
+     *
+     * @return array
+     */
+    public function getCSSFiles()
+    {
+        $list = parent::getCSSFiles();
+
+        $list[] = 'modules/EMerchantPay/Genesis/css/direct/style.css';
 
         return $list;
     }
