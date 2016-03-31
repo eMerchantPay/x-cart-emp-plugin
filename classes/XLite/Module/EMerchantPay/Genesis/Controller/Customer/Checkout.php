@@ -17,28 +17,20 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace XLite\Module\EMerchantPay\Genesis\View\Menu\Admin;
+namespace XLite\Module\EMerchantPay\Genesis\Controller\Customer;
 
 /**
- * Add eMerchantPay to the menu
+ * Checkout controller
  */
-abstract class AAdmin extends \XLite\View\Menu\Admin\AAdmin implements \XLite\Base\IDecorator
+class Checkout extends \XLite\Controller\Customer\Checkout implements \XLite\Base\IDecorator
 {
     /**
-     * Returns the list of related targets
+     * Get Payment Method Checkout Label
      *
-     * @param string $target Target name
-     *
-     * @return array
+     * @return string
      */
-    public function getRelatedTargets($target)
+    public function getMethodCheckoutLabel(\XLite\Model\Payment\Method $method)
     {
-        $targets = parent::getRelatedTargets($target);
-
-        if ('payment_settings' == $target) {
-            $targets[] = 'emerchantpay_settings';
-        }
-
-        return $targets;
+        return $method->getSetting('title');
     }
 }

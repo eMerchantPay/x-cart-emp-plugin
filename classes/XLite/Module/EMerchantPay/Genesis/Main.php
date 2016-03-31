@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2015 eMerchantPay Ltd.
+ * Copyright (C) 2016 eMerchantPay Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * @author      eMerchantPay
- * @copyright   2015 eMerchantPay Ltd.
+ * @copyright   2016 eMerchantPay Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
@@ -28,6 +28,8 @@ abstract class Main extends \XLite\Module\AModule
      * Name of the eMerchantPay Checkout method
      */
     const EMP_CHECKOUT = 'EMerchantPayCheckout';
+    const EMP_DIRECT = 'EMerchantPayDirect';
+
 
     /**
      * Author name
@@ -37,6 +39,16 @@ abstract class Main extends \XLite\Module\AModule
     public static function getAuthorName()
     {
         return 'eMerchantPay Ltd.';
+    }
+
+    /**
+     * Author Website
+     *
+     * @return string
+     */
+    public static function getAuthorWebsite()
+    {
+        return 'https://emerchantpay.com';
     }
 
     /**
@@ -66,7 +78,7 @@ abstract class Main extends \XLite\Module\AModule
      */
     public static function getMinorVersion()
     {
-        return '2';
+        return '3';
     }
 
     /**
@@ -76,7 +88,7 @@ abstract class Main extends \XLite\Module\AModule
      */
     public static function getDescription()
     {
-        return 'Allows you to receive credit-card payments via eMerchantPay\'s - Genesis payment gateway.';
+        return 'Accept payments through eMerchantPay\'s Payment Gateway - Genesis';
     }
 
     /**
@@ -133,5 +145,39 @@ abstract class Main extends \XLite\Module\AModule
         }
 
         return $result[$index];
+    }
+
+    /**
+     * Returns true if EMerchantPayDirect payment is enabled
+     *
+     * @param \XLite\Model\Cart $order Cart object OPTIONAL
+     *
+     * @return boolean
+     */
+    public static function iseMerchantPayDirectEnabled($order = null)
+    {
+        static $result;
+
+        $index = isset($order) ? 1 : 0;
+
+        if (!isset($result[$index])) {
+            $paymentMethod = self::getPaymentMethod(self::EMP_DIRECT, true);
+
+            if ($order && $result[$index]) {
+                $result[$index] = $paymentMethod->getProcessor()->isApplicable($order, $paymentMethod);
+            }
+        }
+
+        return $result[$index];
+    }
+
+    /**
+     * Check - SSL Enabled
+     *
+     * @return boolean
+     */
+    public static function isStoreOverSecuredConnection()
+    {
+        return \XLite\Core\Config::getInstance()->Security->customer_security;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2015 eMerchantPay Ltd.
+ * Copyright (C) 2016 eMerchantPay Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * @author      eMerchantPay
- * @copyright   2015 eMerchantPay Ltd.
+ * @copyright   2016 eMerchantPay Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 namespace XLite\Module\EMerchantPay\Genesis\Controller\Admin;
@@ -44,7 +44,51 @@ class EmerchantpaySettings extends \XLite\Controller\Admin\AAdmin
      */
     public function getTitle()
     {
-        return static::t('eMerchantPay settings');
+        return static::t($this->getPaymentMethod()->getTitle() . ' Settings');
+    }
+
+    /**
+     * Get Should Display Message While Configuring the Module
+     *
+     * @return boolean
+     */
+    public function getShouldDisplayMessage()
+    {
+        return ($this->getPaymentMethod()->getServiceName() == \XLite\Module\EMerchantPay\Genesis\Main::EMP_DIRECT);
+    }
+
+    /**
+     * Returns message style class
+     *
+     * @return string
+     */
+    public function getDisplayMessageClass()
+    {
+        return \XLite\Module\EMerchantPay\Genesis\Main::isStoreOverSecuredConnection()
+            ? 'alert alert-warning'
+            : 'alert alert-danger';
+    }
+
+    /**
+     * Returns message text
+     *
+     * @return string
+     */
+    public function getDisplayMessageText()
+    {
+        return \XLite\Module\EMerchantPay\Genesis\Main::isStoreOverSecuredConnection()
+            ? 'HTTPS connection is enabled. You need PCI-DSS certificate in order to use this payment method'
+            : 'This payment method requires HTTPS connection in order to process payment data! ';
+    }
+
+    /**
+     * Returns Author Website
+     *
+     * @return string
+     */
+    public function getAuthorWebSite()
+    {
+        return \XLite\Module\EMerchantPay\Genesis\Main::getAuthorWebsite();
     }
 
     /**
@@ -52,11 +96,11 @@ class EmerchantpaySettings extends \XLite\Controller\Admin\AAdmin
      *
      * @return string
      */
-    protected function getModelFormClass()
+    public function getModelFormClass()
     {
         return sprintf(
             '\XLite\Module\EMerchantPay\Genesis\View\Model\%s',
-            \XLite\Module\EMerchantPay\Genesis\Main::EMP_CHECKOUT
+            $this->getPaymentMethod()->getServiceName()
         );
     }
 
