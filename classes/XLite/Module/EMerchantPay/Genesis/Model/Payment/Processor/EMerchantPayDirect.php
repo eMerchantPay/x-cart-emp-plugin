@@ -237,13 +237,17 @@ class EMerchantPayDirect extends \XLite\Module\EMerchantPay\Genesis\Model\Paymen
                     case \Genesis\API\Constants\Transaction\States::APPROVED:
                         $status = self::COMPLETED;
                         $this->handleTransactionResponse($responseObject, false);
-                        \XLite\Core\TopMessage::getInstance()->addInfo($responseObject->message);
+                        \XLite\Core\TopMessage::getInstance()->addInfo(
+                            $responseObject->message
+                        );
                         break;
 
                     case \Genesis\API\Constants\Transaction\States::PENDING_ASYNC:
                         $status = self::PROLONGATION;
                         $this->handleTransactionResponse($responseObject, true);
-                        $this->redirectToURL($responseObject->redirect_url);
+                        $this->redirectToURL(
+                            $responseObject->redirect_url)
+                        ;
                         break;
 
                     default:
@@ -253,6 +257,10 @@ class EMerchantPayDirect extends \XLite\Module\EMerchantPay\Genesis\Model\Paymen
                             static::t($responseObject->message),
                             null,
                             static::FAILED
+                        );
+
+                        $this->transaction->setNote(
+                            static::t($responseObject->message)
                         );
                 }
             } else {
@@ -266,20 +274,24 @@ class EMerchantPayDirect extends \XLite\Module\EMerchantPay\Genesis\Model\Paymen
             }
 
         } catch (\Genesis\Exceptions\ErrorAPI $e) {
+            $errorMessage = $e->getMessage() ?: static::t('Invalid data, please check your input.');
             $this->transaction->setDataCell(
                 'status',
-                $e->getMessage() ?: static::t('Invalid data, please check your input.'),
+                $errorMessage,
                 null,
                 static::FAILED
             );
+            $this->transaction->setNote($errorMessage);
             $status = self::FAILED;
-        } catch (\Exception $exception) {
+        } catch (\Exception $e) {
+            $errorMessage = static::t('Failed to initialize payment session, please contact support. ' . $e->getMessage());
             $this->transaction->setDataCell(
                 'status',
-                static::t('Failed to initialize payment session, please contact support.'),
+                $errorMessage,
                 null,
                 static::FAILED
             );
+            $this->transaction->setNote($errorMessage);
             $status = self::FAILED;
         }
 
@@ -394,7 +406,7 @@ class EMerchantPayDirect extends \XLite\Module\EMerchantPay\Genesis\Model\Paymen
      */
     public function getCheckoutTemplate(\XLite\Model\Payment\Method $method)
     {
-        return parent::getCheckoutTemplate($method) . 'emerchantpayDirect.tpl';
+        return parent::getCheckoutTemplate($method) . 'emerchantpayDirect.twig';
     }
 
     /**
@@ -404,6 +416,6 @@ class EMerchantPayDirect extends \XLite\Module\EMerchantPay\Genesis\Model\Paymen
      */
     public function getInputTemplate()
     {
-        return 'modules/EMerchantPay/Genesis/payment/emerchantpayDirectInput.tpl';
+        return 'modules/EMerchantPay/Genesis/payment/emerchantpayDirectInput.twig';
     }
 }

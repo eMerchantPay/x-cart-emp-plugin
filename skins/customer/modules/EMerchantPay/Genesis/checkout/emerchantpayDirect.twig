@@ -1,5 +1,5 @@
-{**
- * eMerchantPayCheckout Template
+{##
+ * eMerchantPayDirect Template
  *
  * Copyright (C) 2016 eMerchantPay Ltd.
  *
@@ -16,14 +16,18 @@
  * @author      eMerchantPay
  * @copyright   2016 eMerchantPay Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
- *}
+ #}
 
-<span class="payment-title">{getMethodCheckoutLabel(method)}</span>
-<img class="emerchantpay-checkout-logo" src="images/../modules/EMerchantPay/Genesis/images/emerchantpay_checkout.png" alt="{method.getName()}" title="{method.getName()}" />
-<div IF="method.getDescription()" class="payment-description emerchantpay-payment-description">{method.getDescription()}</div>
+<span class="payment-title">{{ this.getMethodCheckoutLabel(this.method) }}</span>
+
+<img class="emerchantpay-direct-logo" src="{{ asset('images/../modules/EMerchantPay/Genesis/images/emerchantpay_direct.png') }}" alt="{{ this.method.getName() }}" title="{{ this.method.getName() }}" />
+
+{% if this.method.getDescription() %}
+    <div class="payment-description emerchantpay-payment-description">{{ this.method.getDescription() }}</div>
+{% endif %}
 
 <style type="text/css">
-    .emerchantpay-checkout-logo {
+    .emerchantpay-direct-logo {
         max-height: 25pt;
     }
 

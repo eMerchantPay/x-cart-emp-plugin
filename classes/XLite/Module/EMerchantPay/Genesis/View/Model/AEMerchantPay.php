@@ -176,7 +176,7 @@ abstract class AEMerchantPay extends \XLite\View\Model\AModel
         parent::defineWidgetParams();
 
         $this->widgetParams += array(
-            self::PARAM_PAYMENT_METHOD => new \XLite\Model\WidgetParam\Object('Payment method', null),
+            self::PARAM_PAYMENT_METHOD => new \XLite\Model\WidgetParam\TypeObject('Payment method', null),
         );
     }
 

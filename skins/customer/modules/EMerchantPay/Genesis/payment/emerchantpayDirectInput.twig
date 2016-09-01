@@ -1,5 +1,5 @@
-{**
- * eMerchantPayDirect Template
+{##
+ * eMerchantPayDirect Payment Widget
  *
  * Copyright (C) 2016 eMerchantPay Ltd.
  *
@@ -16,18 +16,6 @@
  * @author      eMerchantPay
  * @copyright   2016 eMerchantPay Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
- *}
+ #}
 
-<span class="payment-title">{getMethodCheckoutLabel(method)}</span>
-<img class="emerchantpay-direct-logo" src="images/../modules/EMerchantPay/Genesis/images/emerchantpay_direct.png" alt="{method.getName()}" title="{method.getName()}" />
-<div IF="method.getDescription()" class="payment-description emerchantpay-payment-description">{method.getDescription()}</div>
-
-<style type="text/css">
-    .emerchantpay-direct-logo {
-        max-height: 25pt;
-    }
-
-    .emerchantpay-payment-description {
-        padding-top: 5pt;
-    }
-</style>
+{{ widget('\\XLite\\Module\\EMerchantPay\\Genesis\\View\\Checkout\\DirectPaymentView') }}

@@ -237,26 +237,39 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
 
             $capture->execute();
 
-            $result = true;
+            $gatewayResponseObject = $capture->response()->getResponseObject();
 
-            $status = \XLite\Model\Payment\Transaction::STATUS_SUCCESS;
+            $status =
+                $gatewayResponseObject->status == \Genesis\API\Constants\Transaction\States::APPROVED
+                    ? \XLite\Model\Payment\Transaction::STATUS_SUCCESS
+                    : \XLite\Model\Payment\Transaction::STATUS_FAILED;
 
-            $transaction->getPaymentTransaction()->getOrder()->setPaymentStatus(
-                \XLite\Model\Order\Status\Payment::STATUS_PAID
-            );
+            $result = $status == \XLite\Model\Payment\Transaction::STATUS_SUCCESS;
 
-            $this->updateTransactionData($transaction, $capture->response()->getResponseObject());
-
-            \XLite\Core\TopMessage::getInstance()
-                ->addInfo(
-                    $capture->response()->getResponseObject()->message
+            if ($result) {
+                $transaction->getPaymentTransaction()->getOrder()->setPaymentStatus(
+                    \XLite\Model\Order\Status\Payment::STATUS_PAID
                 );
+
+                $this->updateTransactionData($transaction, $gatewayResponseObject);
+
+                \XLite\Core\TopMessage::getInstance()->addInfo(
+                    $gatewayResponseObject->message
+                );
+            } else {
+                $this->updateTransactionData($transaction, $gatewayResponseObject);
+                \XLite\Core\TopMessage::addError(
+                    $gatewayResponseObject->message
+                );
+            }
         } catch (\Exception $e) {
             $result = false;
 
             $status = \XLite\Model\Payment\Transaction::STATUS_FAILED;
 
-            \XLite\Core\TopMessage::getInstance()->addError($e->getMessage());
+            \XLite\Core\TopMessage::getInstance()->addError(
+                $e->getMessage()
+            );
         }
 
         $transaction->setStatus($status);
@@ -307,27 +320,39 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
 
             $refund->execute();
 
-            $result = true;
+            $gatewayResponseObject = $refund->response()->getResponseObject();
 
-            $status = \XLite\Model\Payment\Transaction::STATUS_SUCCESS;
+            $status =
+                $gatewayResponseObject->status == \Genesis\API\Constants\Transaction\States::APPROVED
+                    ? \XLite\Model\Payment\Transaction::STATUS_SUCCESS
+                    : \XLite\Model\Payment\Transaction::STATUS_FAILED;
 
-            $transaction->getPaymentTransaction()->getOrder()->setPaymentStatus(
-                \XLite\Model\Order\Status\Payment::STATUS_REFUNDED
-            );
+            $result = $status == \XLite\Model\Payment\Transaction::STATUS_SUCCESS;
 
-            $this->updateTransactionData($transaction, $refund->response()->getResponseObject());
-
-            \XLite\Core\TopMessage::getInstance()
-                ->addInfo(
-                    $refund->response()->getResponseObject()->message
+            if ($result) {
+                $transaction->getPaymentTransaction()->getOrder()->setPaymentStatus(
+                    \XLite\Model\Order\Status\Payment::STATUS_REFUNDED
                 );
+
+                $this->updateTransactionData($transaction, $gatewayResponseObject);
+
+                \XLite\Core\TopMessage::getInstance()->addInfo(
+                    $gatewayResponseObject->message
+                );
+            } else {
+                $this->updateTransactionData($transaction, $gatewayResponseObject);
+                \XLite\Core\TopMessage::addError(
+                    $gatewayResponseObject->message
+                );
+            }
         } catch (\Exception $e) {
             $result = false;
 
             $status = \XLite\Model\Payment\Transaction::STATUS_FAILED;
 
-            \XLite\Core\TopMessage::getInstance()
-                ->addError($e->getMessage());
+            \XLite\Core\TopMessage::getInstance()->addError(
+                $e->getMessage()
+            );
         }
 
         $transaction->setStatus($status);
@@ -376,28 +401,39 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
 
             $void->execute();
 
-            $result = true;
+            $gatewayResponseObject = $void->response()->getResponseObject();
 
-            $status = \XLite\Model\Payment\Transaction::STATUS_SUCCESS;
+            $status =
+                $gatewayResponseObject->status == \Genesis\API\Constants\Transaction\States::APPROVED
+                    ? \XLite\Model\Payment\Transaction::STATUS_SUCCESS
+                    : \XLite\Model\Payment\Transaction::STATUS_FAILED;
 
-            $transaction->getPaymentTransaction()->getOrder()->setPaymentStatus(
-                \XLite\Model\Order\Status\Payment::STATUS_DECLINED
-            );
+            $result = $status == \XLite\Model\Payment\Transaction::STATUS_SUCCESS;
 
-            $this->updateTransactionData($transaction, $void->response()->getResponseObject());
-
-            \XLite\Core\TopMessage::getInstance()
-                ->addInfo(
-                    $void->response()->getResponseObject()->message
+            if ($result) {
+                $transaction->getPaymentTransaction()->getOrder()->setPaymentStatus(
+                    \XLite\Model\Order\Status\Payment::STATUS_DECLINED
                 );
+
+                $this->updateTransactionData($transaction, $gatewayResponseObject);
+
+                \XLite\Core\TopMessage::getInstance()->addInfo(
+                    $gatewayResponseObject->message
+                );
+            } else {
+                $this->updateTransactionData($transaction, $gatewayResponseObject);
+                \XLite\Core\TopMessage::addError(
+                    $gatewayResponseObject->message
+                );
+            }
         } catch (\Exception $e) {
             $result = false;
 
             $status = \XLite\Model\Payment\Transaction::STATUS_FAILED;
 
-            \XLite\Core\TopMessage::getInstance()
-                ->addError($e->getMessage());
-
+            \XLite\Core\TopMessage::getInstance()->addError(
+                $e->getMessage()
+            );
         }
 
         $transaction->setStatus($status);

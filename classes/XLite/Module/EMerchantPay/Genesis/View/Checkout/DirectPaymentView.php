@@ -31,6 +31,6 @@ class DirectPaymentView extends \XLite\View\AView
      */
     protected function getDefaultTemplate()
     {
-        return 'modules/EMerchantPay/Genesis/payment/emerchantpayDirect.tpl';
+        return 'modules/EMerchantPay/Genesis/payment/emerchantpayDirect.twig';
     }
 }

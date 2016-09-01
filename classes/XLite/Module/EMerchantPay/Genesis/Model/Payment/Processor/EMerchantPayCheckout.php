@@ -99,23 +99,38 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
 
             $genesis->execute();
 
-            $status = self::PROLONGATION;
+            $gatewayResponseObject = $genesis->response()->getResponseObject();
 
-            $this->redirectToURL($genesis->response()->getResponseObject()->redirect_url);
+            if (isset($gatewayResponseObject->redirect_url)) {
+                $status = self::PROLONGATION;
+
+                $this->redirectToURL($genesis->response()->getResponseObject()->redirect_url);
+            } else {
+                $errorMessage =
+                    isset($gatewayResponseObject->message)
+                        ? $gatewayResponseObject->message
+                        : '';
+
+                throw new \Exception ($errorMessage);
+            }
         } catch (\Genesis\Exceptions\ErrorAPI $e) {
+            $errorMessage = $e->getMessage() ?: static::t('Invalid data, please check your input.');
             $this->transaction->setDataCell(
                 'status',
-                $e->getMessage() ?: static::t('Invalid data, please check your input.'),
+                $errorMessage,
                 null,
                 static::FAILED
             );
-        } catch (\Exception $exception) {
+            $this->transaction->setNote($errorMessage);
+        } catch (\Exception $e) {
+            $errorMessage = static::t('Failed to initialize payment session, please contact support. ' .$e->getMessage());
             $this->transaction->setDataCell(
                 'status',
-                static::t('Failed to initialize payment session, please contact support.'),
+                $errorMessage,
                 null,
                 static::FAILED
             );
+            $this->transaction->setNote($errorMessage);
         }
 
         return $status;
@@ -349,6 +364,6 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
      */
     public function getCheckoutTemplate(\XLite\Model\Payment\Method $method)
     {
-        return parent::getCheckoutTemplate($method) . 'emerchantpayCheckout.tpl';
+        return parent::getCheckoutTemplate($method) . 'emerchantpayCheckout.twig';
     }
 }
