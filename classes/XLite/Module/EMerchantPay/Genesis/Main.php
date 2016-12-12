@@ -78,7 +78,7 @@ abstract class Main extends \XLite\Module\AModule
      */
     public static function getMinorVersion()
     {
-        return '1';
+        return '2';
     }
 
     /**
@@ -179,5 +179,39 @@ abstract class Main extends \XLite\Module\AModule
     public static function isStoreOverSecuredConnection()
     {
         return \XLite\Core\Config::getInstance()->Security->customer_security;
+    }
+
+    /**
+     * Retrieves the X-Cart Core Version
+     *
+     * @return string
+     */
+    public static function getCurrentCoreVersion()
+    {
+        return \XLite::getInstance()->getVersion();
+    }
+
+    /**
+     * Detects if the X-Cart Core Version is 5.2
+     *
+     * @return bool
+     */
+    public static function getIsCoreVersion52()
+    {
+        return
+            version_compare(self::getCurrentCoreVersion(), '5.2', '>=') &&
+            version_compare(self::getCurrentCoreVersion(), '5.3', '<=');
+    }
+
+    /**
+     * Detects if the X-Cart Core Version is 5.3
+     *
+     * @return bool
+     */
+    public static function getIsCoreVersion53()
+    {
+        return
+            version_compare(self::getCurrentCoreVersion(), '5.3', '>=') &&
+            version_compare(self::getCurrentCoreVersion(), '5.4', '<=');
     }
 }

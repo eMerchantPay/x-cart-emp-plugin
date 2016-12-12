@@ -1,5 +1,6 @@
-<?php
-/*
+{**
+ * eMerchantPayDirect Payment Widget
+ *
  * Copyright (C) 2016 eMerchantPay Ltd.
  *
  * This program is free software; you can redistribute it and/or
@@ -15,28 +16,6 @@
  * @author      eMerchantPay
  * @copyright   2016 eMerchantPay Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
- */
+ *}
 
-namespace XLite\Module\EMerchantPay\Genesis\View\Checkout;
-
-/**
- * Transparent redirect widget
- */
-class DirectPaymentView extends \XLite\View\AView
-{
-    /**
-     * Return widget default template
-     *
-     * @return string|null
-     */
-    protected function getDefaultTemplate()
-    {
-        if (\XLite\Module\EMerchantPay\Genesis\Main::getIsCoreVersion52()) {
-            return 'modules/EMerchantPay/Genesis/payment/emerchantpayDirect.tpl';
-        } elseif (\XLite\Module\EMerchantPay\Genesis\Main::getIsCoreVersion53()) {
-            return 'modules/EMerchantPay/Genesis/payment/emerchantpayDirect.twig';
-        }
-
-        return null;
-    }
-}
+<widget class="XLite\Module\EMerchantPay\Genesis\View\Checkout\DirectPaymentView" />

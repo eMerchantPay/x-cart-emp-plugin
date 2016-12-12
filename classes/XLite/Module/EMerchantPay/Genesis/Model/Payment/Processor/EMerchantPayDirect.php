@@ -402,20 +402,32 @@ class EMerchantPayDirect extends \XLite\Module\EMerchantPay\Genesis\Model\Paymen
      *
      * $param \XLite\Model\Payment\Method $method
      *
-     * @return string
+     * @return string|null
      */
     public function getCheckoutTemplate(\XLite\Model\Payment\Method $method)
     {
-        return parent::getCheckoutTemplate($method) . 'emerchantpayDirect.twig';
+        if ($this->getIsCoreVersion52()) {
+            return parent::getCheckoutTemplate($method) . 'emerchantpayDirect.tpl';
+        } elseif ($this->getIsCoreVersion53()) {
+            return parent::getCheckoutTemplate($method) . 'emerchantpayDirect.twig';
+        }
+
+        return null;
     }
 
     /**
      * Get input template
      *
-     * @return string|void
+     * @return string|null
      */
     public function getInputTemplate()
     {
-        return 'modules/EMerchantPay/Genesis/payment/emerchantpayDirectInput.twig';
+        if ($this->getIsCoreVersion52()) {
+            return 'modules/EMerchantPay/Genesis/payment/emerchantpayDirectInput.tpl';
+        } elseif ($this->getIsCoreVersion53()) {
+            return 'modules/EMerchantPay/Genesis/payment/emerchantpayDirectInput.twig';
+        }
+
+        return null;
     }
 }

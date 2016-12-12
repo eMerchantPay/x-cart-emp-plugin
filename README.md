@@ -6,7 +6,7 @@ This is a Payment Module for X-Cart, that gives you the ability to process payme
 Requirements
 ------------
 
-* X-Cart 5.3.x (you can't get this plugin to work on older 5.X versions simply by tweaking ```Main.php```, you can install it using the Marketplace)
+* X-Cart 5.3.x (you can get this plugin to work on older 5.2 versions simply by changing the __Major Version__ to ```5.2``` in ```Main.php```)
 * [GenesisPHP v1.4](https://github.com/GenesisGateway/genesis_php) - (Integrated in Module)
 * PCI-certified server in order to use ```eMerchantPay Direct```
 

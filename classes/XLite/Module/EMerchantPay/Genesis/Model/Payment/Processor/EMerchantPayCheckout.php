@@ -360,10 +360,16 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
      *
      * $param \XLite\Model\Payment\Method $method
      *
-     * @return string
+     * @return string|null
      */
     public function getCheckoutTemplate(\XLite\Model\Payment\Method $method)
     {
-        return parent::getCheckoutTemplate($method) . 'emerchantpayCheckout.twig';
+        if ($this->getIsCoreVersion52()) {
+            return parent::getCheckoutTemplate($method) . 'emerchantpayCheckout.tpl';
+        } elseif ($this->getIsCoreVersion53()) {
+            return parent::getCheckoutTemplate($method) . 'emerchantpayCheckout.twig';
+        }
+
+        return null;
     }
 }

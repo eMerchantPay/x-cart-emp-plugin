@@ -1124,4 +1124,24 @@ HTML;
             \XLite\Logger::logCustom('eMerchantPay', (string)$data);
         }
     }
+
+    /**
+     * Detects if the X-Cart Core Version is 5.2
+     *
+     * @return bool
+     */
+    protected function getIsCoreVersion52()
+    {
+        return \XLite\Module\EMerchantPay\Genesis\Main::getIsCoreVersion52();
+    }
+
+    /**
+     * Detects if the X-Cart Core Version is 5.3
+     *
+     * @return bool
+     */
+    protected function getIsCoreVersion53()
+    {
+        return \XLite\Module\EMerchantPay\Genesis\Main::getIsCoreVersion53();
+    }
 }
