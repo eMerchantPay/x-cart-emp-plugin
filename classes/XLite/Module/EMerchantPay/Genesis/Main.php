@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2016 eMerchantPay Ltd.
+ * Copyright (C) 2018 emerchantpay Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,20 +12,20 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * @author      eMerchantPay
- * @copyright   2016 eMerchantPay Ltd.
+ * @author      emerchantpay
+ * @copyright   2018 emerchantpay Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
 namespace XLite\Module\EMerchantPay\Genesis;
 
 /**
- * eMerchantPay Module
+ * emerchantpay Module
  */
 abstract class Main extends \XLite\Module\AModule
 {
     /**
-     * Name of the eMerchantPay Checkout method
+     * Name of the emerchantpay Checkout method
      */
     const EMP_CHECKOUT = 'EMerchantPayCheckout';
     const EMP_DIRECT = 'EMerchantPayDirect';
@@ -38,7 +38,7 @@ abstract class Main extends \XLite\Module\AModule
      */
     public static function getAuthorName()
     {
-        return 'eMerchantPay Ltd.';
+        return 'emerchantpay Ltd.';
     }
 
     /**
@@ -58,7 +58,7 @@ abstract class Main extends \XLite\Module\AModule
      */
     public static function getModuleName()
     {
-        return 'eMerchantPay';
+        return 'emerchantpay';
     }
 
     /**
@@ -78,7 +78,7 @@ abstract class Main extends \XLite\Module\AModule
      */
     public static function getMinorVersion()
     {
-        return '2';
+        return '3';
     }
 
     /**
@@ -88,7 +88,7 @@ abstract class Main extends \XLite\Module\AModule
      */
     public static function getDescription()
     {
-        return 'Accept payments through eMerchantPay\'s Payment Gateway - Genesis';
+        return 'Accept payments through emerchantpay\'s Payment Gateway - Genesis';
     }
 
     /**
@@ -124,13 +124,13 @@ abstract class Main extends \XLite\Module\AModule
     }
 
     /**
-     * Returns true if EMerchantPayCheckout payment is enabled
+     * Returns true if emerchantpayCheckout payment is enabled
      *
      * @param \XLite\Model\Cart $order Cart object OPTIONAL
      *
      * @return boolean
      */
-    public static function iseMerchantPayCheckoutEnabled($order = null)
+    public static function isEmerchantpayCheckoutEnabled($order = null)
     {
         static $result;
 
@@ -148,13 +148,13 @@ abstract class Main extends \XLite\Module\AModule
     }
 
     /**
-     * Returns true if EMerchantPayDirect payment is enabled
+     * Returns true if emerchantpayDirect payment is enabled
      *
      * @param \XLite\Model\Cart $order Cart object OPTIONAL
      *
      * @return boolean
      */
-    public static function iseMerchantPayDirectEnabled($order = null)
+    public static function isEmerchantpayDirectEnabled($order = null)
     {
         static $result;
 
