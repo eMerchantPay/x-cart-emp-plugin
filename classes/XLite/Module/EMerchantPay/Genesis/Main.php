@@ -68,7 +68,7 @@ abstract class Main extends \XLite\Module\AModule
      */
     public static function getMajorVersion()
     {
-        return '5.3';
+        return '5.4';
     }
 
     /**
@@ -78,7 +78,7 @@ abstract class Main extends \XLite\Module\AModule
      */
     public static function getMinorVersion()
     {
-        return '3';
+        return '0.4';
     }
 
     /**
@@ -196,7 +196,7 @@ abstract class Main extends \XLite\Module\AModule
      *
      * @return bool
      */
-    public static function getIsCoreVersion52()
+    public static function isCoreVersion52()
     {
         return
             version_compare(self::getCurrentCoreVersion(), '5.2', '>=') &&
@@ -208,10 +208,8 @@ abstract class Main extends \XLite\Module\AModule
      *
      * @return bool
      */
-    public static function getIsCoreVersion53()
+    public static function isCoreAboveVersion53()
     {
-        return
-            version_compare(self::getCurrentCoreVersion(), '5.3', '>=') &&
-            version_compare(self::getCurrentCoreVersion(), '5.4', '<=');
+        return version_compare(self::getCurrentCoreVersion(), '5.3', '>=');
     }
 }

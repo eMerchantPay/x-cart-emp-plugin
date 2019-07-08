@@ -466,12 +466,16 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
             if (isset($request->action) && $request->action == 'success') {
                 if ($transaction::STATUS_INPROGRESS == $transaction->getStatus()) {
                     $status = $transaction::STATUS_PENDING;
+                } else {
+                    $status = $transaction::STATUS_SUCCESS;
                 }
 
                 $transaction->setNote(
                     static::t('Payment completed successfully!')
                 );
             } else {
+                $status = $transaction::STATUS_FAILED;
+
                 $this->transaction->setDataCell(
                     'status',
                     static::t('Payment unsuccessful!'),
@@ -523,7 +527,6 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
     public function processCallback(\XLite\Model\Payment\Transaction $transaction)
     {
         parent::processCallback($transaction);
-
 
         $status = $transaction::STATUS_FAILED;
 
@@ -1130,9 +1133,9 @@ HTML;
      *
      * @return bool
      */
-    protected function getIsCoreVersion52()
+    protected function isCoreVersion52()
     {
-        return \XLite\Module\EMerchantPay\Genesis\Main::getIsCoreVersion52();
+        return \XLite\Module\EMerchantPay\Genesis\Main::isCoreVersion52();
     }
 
     /**
@@ -1140,8 +1143,8 @@ HTML;
      *
      * @return bool
      */
-    protected function getIsCoreVersion53()
+    protected function isCoreAboveVersion53()
     {
-        return \XLite\Module\EMerchantPay\Genesis\Main::getIsCoreVersion53();
+        return \XLite\Module\EMerchantPay\Genesis\Main::isCoreAboveVersion53();
     }
 }

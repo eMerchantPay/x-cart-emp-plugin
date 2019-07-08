@@ -159,7 +159,7 @@ abstract class AEMerchantPay extends \XLite\View\Model\AModel
      */
     protected function getModelObjectValue($name)
     {
-        $paymentMethod = $this->getParam(static::PARAM_PAYMENT_METHOD);
+        $paymentMethod = $this->getPaymentMethod();
 
         return $paymentMethod
             ? $paymentMethod->getSetting($name)
@@ -177,7 +177,7 @@ abstract class AEMerchantPay extends \XLite\View\Model\AModel
 
         $widgetParamClassName = '\XLite\Model\WidgetParam\Object';
 
-        if (\XLite\Module\EMerchantPay\Genesis\Main::getIsCoreVersion53()) {
+        if (\XLite\Module\EMerchantPay\Genesis\Main::isCoreAboveVersion53()) {
             $widgetParamClassName = '\XLite\Model\WidgetParam\TypeObject';
         }
 

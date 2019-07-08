@@ -1,0 +1,11 @@
+version: 5.4.0.4
+type: payment
+authorName: 'emerchantpay Ltd.'
+moduleName: emerchantpay
+description: 'Accept payments through emerchantpay''s Payment Gateway - Genesis'
+minorRequiredCoreVersion: 0
+dependsOn: {  }
+incompatibleWith: {  }
+skins: {  }
+showSettingsForm: false
+canDisable: true
