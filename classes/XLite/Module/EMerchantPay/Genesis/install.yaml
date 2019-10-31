@@ -38,6 +38,8 @@ XLite\Model\Payment\Method:
         value: store_
       - name: transaction_types
         value: '["authorize", "sale"]'
+      - name: wpf_tokenization
+        value: N
 
   - service_name: EMerchantPayDirect
     class: Module\EMerchantPay\Genesis\Model\Payment\Processor\EMerchantPayDirect

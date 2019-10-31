@@ -42,6 +42,8 @@ core.bind(
           var cardWrapper = jQuery('#payment-method-emerchantpay-direct .card-wrapper');
 
           if (cardWrapper.length) {
+              cardWrapper.html('');
+
               new Card({
                   form: 'form.place',
                   container: '#payment-method-emerchantpay-direct .card-wrapper',
@@ -57,26 +59,38 @@ core.bind(
               });
           }
       }
+
       function updateCardHolderField() {
           var box = jQuery('.transparent-redirect-box');
           if (box.length) {
               var ccName = box.find('input[name="emerchantpay-direct-card-holder"]');
 
               if (ccName.length && '' === ccName.val()) {
-                  var firstname = jQuery('#shippingaddress-firstname').val();
-                  var lastname = jQuery('#shippingaddress-lastname').val();
-
-                  if (!jQuery('#same_address').prop('checked')) {
-                      firstname = jQuery('#billingaddress-firstname').val();
-                      lastname = jQuery('#billingaddress-lastname').val();
-                  }
-
-                  ccName.val(firstname.toUpperCase() + ' ' + lastname.toUpperCase());
+                  ccName.val(getPersonNames());
               }
-
           }
       }
 
+      function getPersonNames() {
+          var field = extractNames();
+
+          if (!field.firstname || !field.lastname) {
+              field.firstname = $('.address-field_firstname:last').text();
+              field.lastname = $('.address-field_lastname:last').text();
+          }
+
+          return (field.firstname.trim() + ' ' + field.lastname.trim()).toUpperCase()
+      }
+
+      function extractNames() {
+          return jQuery('#same_address').prop("checked") ? {
+              firstname: jQuery('#billingaddress-firstname').val(),
+              lastname: jQuery('#billingaddress-lastname').val()
+          } :  {
+              firstname: jQuery('#shippingaddress-firstname').val(),
+              lastname: jQuery('#shippingaddress-lastname').val()
+          }
+      }
   }
 );
 

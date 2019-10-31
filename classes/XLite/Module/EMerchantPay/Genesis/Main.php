@@ -78,7 +78,7 @@ abstract class Main extends \XLite\Module\AModule
      */
     public static function getMinorVersion()
     {
-        return '0.4';
+        return '0.5';
     }
 
     /**

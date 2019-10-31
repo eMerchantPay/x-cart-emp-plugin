@@ -386,7 +386,8 @@ class EMerchantPayDirect extends \XLite\Module\EMerchantPay\Genesis\Model\Paymen
 
         $card_info['expiration'] = $requestData['emerchantpay-direct-card-expiry'];
 
-        list($month, $year) = explode(' / ', $card_info['expiration']);
+        $card_info['expiration'] = preg_replace('/[\s\t]*/', '', $card_info['expiration']);
+        list($month, $year) = explode('/', $card_info['expiration']);
 
         $card_info['expire_month'] = $month;
         $card_info['expire_year'] = substr(date('Y'), 0, 2) . substr($year, -2);

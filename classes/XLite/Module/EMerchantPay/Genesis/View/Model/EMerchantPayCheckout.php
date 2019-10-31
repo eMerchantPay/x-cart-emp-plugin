@@ -43,5 +43,12 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\View\Model
                 'You can select which transaction types can be attempted (from the Gateway) upon customer processing',
             self::SCHEMA_REQUIRED => true,
         );
+        $this->schemaAdditional['wpf_tokenization'] = array(
+            self::SCHEMA_CLASS    => '\XLite\View\FormField\Select\EnabledDisabled',
+            self::SCHEMA_LABEL    => 'Tokenization Enabled',
+            self::SCHEMA_HELP     =>
+                'Is Tokenization going to be used for the Web Payment Form?',
+            self::SCHEMA_REQUIRED => false,
+        );
     }
 }

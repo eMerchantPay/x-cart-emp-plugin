@@ -88,13 +88,21 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
                         $transaction_type
                     );
                 }
-
             }
 
             if (in_array(\XLite\Core\Session::getInstance()->getLanguage()->getCode(), $this->supported_languages)) {
                 $genesis->request()->setLanguage(
                     \XLite\Core\Session::getInstance()->getLanguage()->getCode()
                 );
+            }
+
+            if ($this->getSetting('wpf_tokenization')) {
+                $genesis->request()->setRememberCard(true);
+
+                $consumerId = $this->getConsumerIdFromGenesisGateway($data['customer_email']);
+                if ($consumerId !== 0) {
+                    $genesis->request()->setConsumerId($consumerId);
+                }
             }
 
             $genesis->execute();
@@ -134,6 +142,47 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
         }
 
         return $status;
+    }
+
+    /**
+     * Use Genesis API to get consumer ID
+     *
+     * @param string $email Consumer Email
+     *
+     * @return int
+     */
+    protected static function getConsumerIdFromGenesisGateway($email)
+    {
+        try {
+            $genesis = new \Genesis\Genesis('NonFinancial\Consumers\Retrieve');
+            $genesis->request()->setEmail($email);
+
+            $genesis->execute();
+
+            $response = $genesis->response()->getResponseObject();
+
+            if (static::isErrorResponse($response)) {
+                return 0;
+            }
+
+            return intval($response->consumer_id);
+        } catch (\Exception $exception) {
+            return 0;
+        }
+    }
+
+    /**
+     * Checks if Genesis response is an error
+     *
+     * @param \stdClass $response Genesis response
+     *
+     * @return bool
+     */
+    protected static function isErrorResponse($response)
+    {
+        $state = new \Genesis\API\Constants\Transaction\States($response->status);
+
+        return $state->isError();
     }
 
     /**
@@ -331,8 +380,6 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
             \Genesis\API\Constants\Payment\Methods::QIWI        =>
                 \Genesis\API\Constants\Transaction\Types::PPRO,
             \Genesis\API\Constants\Payment\Methods::SAFETY_PAY  =>
-                \Genesis\API\Constants\Transaction\Types::PPRO,
-            \Genesis\API\Constants\Payment\Methods::TELEINGRESO =>
                 \Genesis\API\Constants\Transaction\Types::PPRO,
             \Genesis\API\Constants\Payment\Methods::TRUST_PAY   =>
                 \Genesis\API\Constants\Transaction\Types::PPRO,
