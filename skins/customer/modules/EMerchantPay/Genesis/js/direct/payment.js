@@ -27,17 +27,6 @@ core.bind(
           updateCardHolderField();
       });
 
-      core.bind(
-          'checkout.common.ready',
-          function (event, state) {
-              var box = jQuery('.transparent-redirect-box');
-              if (box.length && !box.get(0).tansparentRedirect) {
-                  var form = box.closest('form');
-                  form.submit();
-              }
-          }
-      );
-
       function attachCardToWrapper() {
           var cardWrapper = jQuery('#payment-method-emerchantpay-direct .card-wrapper');
 

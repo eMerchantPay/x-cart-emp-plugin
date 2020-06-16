@@ -34,6 +34,7 @@ class InvalidArgument extends Exception
      */
     protected function getCustomMessage()
     {
-        return 'The supplied argument is invalid for this method!';
+        return ($this->getMessage()) ?
+            $this->getMessage() : 'The supplied argument is invalid for this method!';
     }
 }
