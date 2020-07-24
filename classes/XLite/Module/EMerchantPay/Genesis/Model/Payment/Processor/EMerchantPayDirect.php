@@ -19,6 +19,8 @@
 
 namespace XLite\Module\EMerchantPay\Genesis\Model\Payment\Processor;
 
+use Genesis\API\Constants\Transaction\Types;
+
 /**
  * emerchantpay Checkout Payment Method
  *
@@ -78,21 +80,9 @@ class EMerchantPayDirect extends \XLite\Module\EMerchantPay\Genesis\Model\Paymen
      */
     private function executeTransaction($data)
     {
-        switch ($data['transaction_type']) {
-            default:
-            case \Genesis\API\Constants\Transaction\Types::AUTHORIZE:
-                $genesis = new \Genesis\Genesis('Financial\Cards\Authorize');
-                break;
-            case \Genesis\API\Constants\Transaction\Types::AUTHORIZE_3D:
-                $genesis = new \Genesis\Genesis('Financial\Cards\Authorize3D');
-                break;
-            case \Genesis\API\Constants\Transaction\Types::SALE:
-                $genesis = new \Genesis\Genesis('Financial\Cards\Sale');
-                break;
-            case \Genesis\API\Constants\Transaction\Types::SALE_3D:
-                $genesis = new \Genesis\Genesis('Financial\Cards\Sale3D');
-                break;
-        }
+        $genesis = new \Genesis\Genesis(
+            Types::getFinancialRequestClassForTrxType($data['transaction_type'])
+        );
 
         if (isset($genesis)) {
             $genesis

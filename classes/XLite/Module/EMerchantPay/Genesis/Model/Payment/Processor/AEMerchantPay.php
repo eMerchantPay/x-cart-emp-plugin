@@ -19,6 +19,9 @@
 
 namespace XLite\Module\EMerchantPay\Genesis\Model\Payment\Processor;
 
+use Genesis\API\Constants\Transaction\Types;
+use XLite\Module\EMerchantPay\Genesis\Helpers\Helper;
+
 abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
 {
     /**
@@ -50,6 +53,13 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
     const REF_TKN = 'terminal_token';
 
     /**
+     * Transaction TYPE field
+     *
+     * @var string
+     */
+    const REF_TYPE = 'transaction_type';
+
+    /**
      * Checkout Template Directory
      *
      * @var string
@@ -59,7 +69,7 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
     /**
      * Get allowed backend transactions
      *
-     * @return string Status code
+     * @return array Status code
      */
     public function getAllowedTransactions()
     {
@@ -180,13 +190,14 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
     protected function defineSavedData()
     {
         $data = array(
-            'unique_id' => 'UniqueId',
-            'transaction_id' => 'TransactionId',
-            'type' => 'Type',
-            'status' => 'Status',
-            'timestamp' => 'Timestamp',
-            'amount' => 'Amount',
-            'currency' => 'Currency',
+            'unique_id'        => 'UniqueId',
+            'transaction_id'   => 'TransactionId',
+            'type'             => 'Type',
+            'status'           => 'Status',
+            'timestamp'        => 'Timestamp',
+            'amount'           => 'Amount',
+            'currency'         => 'Currency',
+            'transaction_type' => 'Transaction Type'
         );
 
         return array_merge(parent::defineSavedData(), $data);
@@ -220,20 +231,30 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
         //Additional Initialisation Code needed for the transaction
         $this->doBeforeCapture($transaction);
 
+        $transactionType = $this->getReferenceValue($transaction, self::REF_TYPE);
+
         try {
             // Genesis Request
-            $capture = new \Genesis\Genesis('Financial\Capture');
+            $capture = new \Genesis\Genesis(
+                Types::getCaptureTransactionClass($transactionType)
+            );
 
             $capture
                 ->request()
                     ->setTransactionId(md5(microtime()))
-                    ->setReferenceId($this->getRefId($transaction))
+                    ->setReferenceId($this->getReferenceValue($transaction, self::REF_UID))
                     ->setRemoteIp($this->getClientIP())
                     ->setUsage(self::TXN_USG)
                     ->setAmount($this->getFormattedPrice($transaction->getValue()))
-                    ->setCurrency(
-                        $transaction->getPaymentTransaction()->getOrder()->getCurrency()->getCode()
+                    ->setCurrency($transaction->getPaymentTransaction()->getOrder()->getCurrency()->getCode());
+
+            if ($transactionType === Types::KLARNA_AUTHORIZE) {
+                $capture
+                    ->request()
+                    ->setItems(
+                        Helper::getKlarnaCustomParamItems($transaction->getPaymentTransaction()->getOrder())
                     );
+            }
 
             $capture->execute();
 
@@ -306,17 +327,29 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
         //Additional Initialisation Code needed for the transaction
         $this->doBeforeRefund($transaction);
 
+        $transactionType = $this->getReferenceValue($transaction, self::REF_TYPE);
+
         try {
-            $refund = new \Genesis\Genesis('Financial\Refund');
+            $refund = new \Genesis\Genesis(
+                Types::getRefundTransactionClass($transactionType)
+            );
 
             $refund
                 ->request()
                     ->setTransactionId(md5(time()))
-                    ->setReferenceId($this->getRefId($transaction))
+                    ->setReferenceId($this->getReferenceValue($transaction, self::REF_UID))
                     ->setRemoteIp($this->getClientIP())
                     ->setUsage(self::TXN_USG)
                     ->setAmount($this->getFormattedPrice($transaction->getValue()))
                     ->setCurrency($transaction->getPaymentTransaction()->getOrder()->getCurrency()->getCode());
+
+            if ($transactionType === Types::KLARNA_CAPTURE) {
+                $refund
+                    ->request()
+                    ->setItems(
+                        Helper::getKlarnaCustomParamItems($transaction->getPaymentTransaction()->getOrder())
+                    );
+            }
 
             $refund->execute();
 
@@ -395,7 +428,7 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
             $void
                 ->request()
                     ->setTransactionId(md5(time()))
-                    ->setReferenceId($this->getRefId($transaction))
+                    ->setReferenceId($this->getReferenceValue($transaction, self::REF_UID))
                     ->setRemoteIp($this->getClientIP())
                     ->setUsage(self::TXN_USG);
 
@@ -594,11 +627,12 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
     protected function updateInitialPaymentTransaction(\XLite\Model\Payment\Transaction $transaction, $responseObj)
     {
         $vars = array(
-            'terminal_token'=> 'Terminal',
-            'status'        => 'Status',
-            'amount'        => 'Amount',
-            'currency'      => 'Currency',
-            'timestamp'     => 'Timestamp',
+            'terminal_token'   => 'Terminal',
+            'status'           => 'Status',
+            'amount'           => 'Amount',
+            'currency'         => 'Currency',
+            'timestamp'        => 'Timestamp',
+            'transaction_type' => 'Transaction Type'
         );
 
         // Set the CheckoutID
@@ -626,7 +660,7 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
      *
      * @return string
      */
-    protected function getRefId(\XLite\Model\Payment\BackendTransaction $backendTransaction)
+    protected function getReferenceValue(\XLite\Model\Payment\BackendTransaction $backendTransaction, $type)
     {
         $referenceId = null;
 
@@ -636,20 +670,20 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
             case \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_CAPTURE:
             case \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_VOID:
                 if (\XLite\Model\Payment\BackendTransaction::TRAN_TYPE_AUTH == $initialTransaction->getType()) {
-                    $referenceId = $initialTransaction->getDataCell(self::REF_UID)->getValue();
+                    $referenceId = $initialTransaction->getDataCell($type)->getValue();
                 }
                 break;
             case \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_REFUND:
                 $paymentTransaction = $backendTransaction->getPaymentTransaction();
 
                 if (\XLite\Model\Payment\BackendTransaction::TRAN_TYPE_SALE == $paymentTransaction->getType()) {
-                    $referenceId = $initialTransaction->getDataCell(self::REF_UID)->getValue();
+                    $referenceId = $initialTransaction->getDataCell($type)->getValue();
                 } elseif ($paymentTransaction->isCaptured()) {
                     foreach ($paymentTransaction->getBackendTransactions() as $bt) {
                         if (\XLite\Model\Payment\BackendTransaction::TRAN_TYPE_CAPTURE == $bt->getType() &&
                             \XLite\Model\Payment\Transaction::STATUS_SUCCESS == $bt->getStatus()
                         ) {
-                            $referenceId = $bt->getDataCell(self::REF_UID)->getValue();
+                            $referenceId = $bt->getDataCell($type)->getValue();
                             break;
                         }
                     }
@@ -684,35 +718,25 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
 
         $partialFlag = (isset($payment->partial_approval) && $payment->partial_approval) ? true : false;
 
-        switch ($payment->transaction_type) {
-            case \Genesis\API\Constants\Transaction\Types::AUTHORIZE:
-            case \Genesis\API\Constants\Transaction\Types::AUTHORIZE_3D:
-                $status = \XLite\Model\Order\Status\Payment::STATUS_AUTHORIZED;
-                break;
-            case \Genesis\API\Constants\Transaction\Types::ABNIDEAL:
-            case \Genesis\API\Constants\Transaction\Types::CASHU:
-            case \Genesis\API\Constants\Transaction\Types::NETELLER:
-            case \Genesis\API\Constants\Transaction\Types::PAYSAFECARD:
-            case \Genesis\API\Constants\Transaction\Types::PPRO:
-            case \Genesis\API\Constants\Transaction\Types::SALE:
-            case \Genesis\API\Constants\Transaction\Types::SALE_3D:
-            case \Genesis\API\Constants\Transaction\Types::SOFORT:
-                $status = ($partialFlag)
-                    ? \XLite\Model\Order\Status\Payment::STATUS_PART_PAID
-                    : \XLite\Model\Order\Status\Payment::STATUS_PAID;
-                break;
-            case \Genesis\API\Constants\Transaction\Types::REFUND:
-                $status = \XLite\Model\Order\Status\Payment::STATUS_REFUNDED;
-                break;
-            case \Genesis\API\Constants\Transaction\Types::VOID:
-                $status = \XLite\Model\Order\Status\Payment::STATUS_DECLINED;
-                break;
-            default:
-                $status = '';
-                break;
+        if (Types::isAuthorize($payment->transaction_type)) {
+            return \XLite\Model\Order\Status\Payment::STATUS_AUTHORIZED;
         }
 
-        return $status;
+        if (Types::isRefund($payment->transaction_type)) {
+            return \XLite\Model\Order\Status\Payment::STATUS_REFUNDED;
+        }
+
+        if ($payment->transaction_type === Types::VOID) {
+            return \XLite\Model\Order\Status\Payment::STATUS_DECLINED;
+        }
+
+        if (Types::isValidTransactionType($payment->transaction_type)) {
+            return ($partialFlag) ?
+                \XLite\Model\Order\Status\Payment::STATUS_PART_PAID :
+                \XLite\Model\Order\Status\Payment::STATUS_PAID;
+        }
+
+        return '';
     }
 
     /**
@@ -724,44 +748,47 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
      */
     protected function getTransactionType($payment)
     {
-        $partialFlag = (isset($payment->partial_approval) && $payment->partial_approval) ? true : false;
+        $typeArray = (isset($payment->partial_approval) && $payment->partial_approval) ?
+            array(
+                'capture' => \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_CAPTURE_PART,
+                'refund'  => \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_REFUND_PART,
+                'void'    => \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_VOID_PART
+            ) :
+            array(
+                'capture' => \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_CAPTURE,
+                'refund'  => \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_REFUND,
+                'void'    => \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_VOID
+            );
 
-        switch ($payment->transaction_type) {
-            case \Genesis\API\Constants\Transaction\Types::AUTHORIZE:
-            case \Genesis\API\Constants\Transaction\Types::AUTHORIZE_3D:
-                $status = \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_AUTH;
-                break;
-            case \Genesis\API\Constants\Transaction\Types::CAPTURE:
-                $status = ($partialFlag)
-                    ? \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_CAPTURE_PART
-                    : \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_CAPTURE;
-                break;
-            case \Genesis\API\Constants\Transaction\Types::ABNIDEAL:
-            case \Genesis\API\Constants\Transaction\Types::CASHU:
-            case \Genesis\API\Constants\Transaction\Types::NETELLER:
-            case \Genesis\API\Constants\Transaction\Types::PAYSAFECARD:
-            case \Genesis\API\Constants\Transaction\Types::PPRO:
-            case \Genesis\API\Constants\Transaction\Types::SALE:
-            case \Genesis\API\Constants\Transaction\Types::SALE_3D:
-            case \Genesis\API\Constants\Transaction\Types::SOFORT:
-                $status = \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_SALE;
-                break;
-            case \Genesis\API\Constants\Transaction\Types::REFUND:
-                $status = ($partialFlag)
-                    ? \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_REFUND_PART
-                    : \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_REFUND;
-                break;
-            case \Genesis\API\Constants\Transaction\Types::VOID:
-                $status = ($partialFlag)
-                    ? \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_VOID_PART
-                    : \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_VOID;
-                break;
-            default:
-                $status = '';
-                break;
+        $typeArray = array_merge(
+            $typeArray,
+            array(
+                'authorize' => \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_AUTH,
+                'default'   => \XLite\Model\Payment\BackendTransaction::TRAN_TYPE_SALE
+            )
+        );
+
+        if (Types::isAuthorize($payment->transaction_type)) {
+            return $typeArray['authorize'];
         }
 
-        return $status;
+        if (Types::isCapture($payment->transaction_type)) {
+            return $typeArray['capture'];
+        }
+
+        if (Types::isRefund($payment->transaction_type)) {
+            return $typeArray['refund'];
+        }
+
+        if ($payment->transaction_type === Types::VOID) {
+            return $typeArray['void'];
+        }
+
+        if (Types::isValidTransactionType($payment->transaction_type)) {
+            return $typeArray['default'];
+        }
+
+        return '';
     }
 
     /**

@@ -19,6 +19,11 @@
 
 namespace XLite\Module\EMerchantPay\Genesis\Model\Payment\Processor;
 
+use Genesis\API\Constants\Payment\Methods;
+use Genesis\API\Constants\Transaction\Types;
+use XLite\Core\Session;
+use XLite\Module\EMerchantPay\Genesis\Helpers\Helper;
+
 /**
  * emerchantpay Checkout Payment Method
  *
@@ -26,11 +31,6 @@ namespace XLite\Module\EMerchantPay\Genesis\Model\Payment\Processor;
  */
 class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Payment\Processor\AEMerchantPay
 {
-    /**
-     * Supported languages
-     */
-    private $supported_languages = array('en', 'es', 'fr', 'de', 'it', 'ja', 'zh', 'ar', 'pt', 'tr', 'ru', 'bg', 'hi');
-
     /**
      * Create payment method transaction
      *
@@ -77,22 +77,11 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
                     ->setShippingState($data['shipping']['state'])
                     ->setShippingCountry($data['shipping']['country']);
 
-            foreach ($data['transaction_types'] as $transaction_type) {
-                if (is_array($transaction_type)) {
-                    $genesis->request()->addTransactionType(
-                        $transaction_type['name'],
-                        $transaction_type['parameters']
-                    );
-                } else {
-                    $genesis->request()->addTransactionType(
-                        $transaction_type
-                    );
-                }
-            }
+            $this->addTransactionTypesToGatewayRequest($genesis, $data['transaction_types']);
 
-            if (in_array(\XLite\Core\Session::getInstance()->getLanguage()->getCode(), $this->supported_languages)) {
+            if (in_array(Session::getInstance()->getLanguage()->getCode(), Helper::getSupportedWpfLanguages())) {
                 $genesis->request()->setLanguage(
-                    \XLite\Core\Session::getInstance()->getLanguage()->getCode()
+                    Session::getInstance()->getLanguage()->getCode()
                 );
             }
 
@@ -142,6 +131,81 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
         }
 
         return $status;
+    }
+
+    /**
+     * @param \Genesis\Genesis $genesis
+     * @param $transactionTypes
+     * @throws \Exception
+     */
+    protected function addTransactionTypesToGatewayRequest(\Genesis\Genesis $genesis, $transactionTypes)
+    {
+        foreach ($transactionTypes as $transactionType) {
+            if (is_array($transactionType)) {
+                $genesis->request()->addTransactionType(
+                    $transactionType['name'],
+                    $transactionType['parameters']
+                );
+
+                continue;
+            }
+
+            $parameters = $this->getCustomRequiredParameters($transactionType);
+
+            $genesis
+                ->request()
+                ->addTransactionType(
+                    $transactionType,
+                    $parameters
+                );
+
+            unset($parameters);
+        }
+    }
+
+    /**
+     * @param $transactionType
+     * @return array
+     * @throws \Exception
+     */
+    protected function getCustomRequiredParameters($transactionType)
+    {
+        $parameters = array();
+
+        switch ($transactionType) {
+            case \Genesis\API\Constants\Transaction\Types::PAYBYVOUCHER_SALE:
+                $parameters = array(
+                    'card_type'   =>
+                        \Genesis\API\Constants\Transaction\Parameters\PayByVouchers\CardTypes::VIRTUAL,
+                    'redeem_type' =>
+                        \Genesis\API\Constants\Transaction\Parameters\PayByVouchers\RedeemTypes::INSTANT
+                );
+                break;
+            case \Genesis\API\Constants\Transaction\Types::IDEBIT_PAYIN:
+            case \Genesis\API\Constants\Transaction\Types::INSTA_DEBIT_PAYIN:
+                $parameters = array(
+                    'customer_account_id' => Helper::getCurrentUserIdHash(
+                        $this->transaction->getOrder()->getPaymentTransactionId()
+                    )
+                );
+                break;
+            case \Genesis\API\Constants\Transaction\Types::KLARNA_AUTHORIZE:
+                $parameters = Helper::getKlarnaCustomParamItems(
+                    $this->transaction->getOrder()
+                )->toArray();
+                break;
+            case \Genesis\API\Constants\Transaction\Types::TRUSTLY_SALE:
+                $userId        = Helper::getCurrentUserId();
+                $trustlyUserId = empty($userId) ?
+                    Helper::getCurrentUserIdHash($this->transaction->getOrder()->getPaymentTransactionId()) : $userId;
+
+                $parameters = array(
+                    'user_id' => $trustlyUserId
+                );
+                break;
+        }
+
+        return $parameters;
     }
 
     /**
@@ -344,10 +408,10 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
             // Fallback to authorize
             $types = array(
                 'transaction_types' => array(
-                    \Genesis\API\Constants\Transaction\Types::AUTHORIZE,
-                    \Genesis\API\Constants\Transaction\Types::AUTHORIZE_3D,
-                    \Genesis\API\Constants\Transaction\Types::SALE,
-                    \Genesis\API\Constants\Transaction\Types::SALE_3D
+                    Types::AUTHORIZE,
+                    Types::AUTHORIZE_3D,
+                    Types::SALE,
+                    Types::SALE_3D
                 )
             );
         }
@@ -364,42 +428,35 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
      */
     protected function getCheckoutTransactionTypes()
     {
-        $processed_list = array();
+        $processedList = array();
+        $aliasMap      = array();
 
-        $selected_types = json_decode(
+        $selectedTypes = json_decode(
             $this->getSetting('transaction_types')
         );
 
-        $alias_map = array(
-            \Genesis\API\Constants\Payment\Methods::EPS         =>
-                \Genesis\API\Constants\Transaction\Types::PPRO,
-            \Genesis\API\Constants\Payment\Methods::GIRO_PAY    =>
-                \Genesis\API\Constants\Transaction\Types::PPRO,
-            \Genesis\API\Constants\Payment\Methods::PRZELEWY24  =>
-                \Genesis\API\Constants\Transaction\Types::PPRO,
-            \Genesis\API\Constants\Payment\Methods::QIWI        =>
-                \Genesis\API\Constants\Transaction\Types::PPRO,
-            \Genesis\API\Constants\Payment\Methods::SAFETY_PAY  =>
-                \Genesis\API\Constants\Transaction\Types::PPRO,
-            \Genesis\API\Constants\Payment\Methods::TRUST_PAY   =>
-                \Genesis\API\Constants\Transaction\Types::PPRO,
-        );
+        $pproSuffix = Helper::PPRO_TRANSACTION_SUFFIX;
+        $methods    = Methods::getMethods();
 
-        foreach ($selected_types as $selected_type) {
-            if (array_key_exists($selected_type, $alias_map)) {
-                $transaction_type = $alias_map[$selected_type];
+        foreach ($methods as $method) {
+            $aliasMap[$method . $pproSuffix] = Types::PPRO;
+        }
 
-                $processed_list[$transaction_type]['name'] = $transaction_type;
+        foreach ($selectedTypes as $selectedType) {
+            if (array_key_exists($selectedType, $aliasMap)) {
+                $transactionType = $aliasMap[$selectedType];
 
-                $processed_list[$transaction_type]['parameters'][] = array(
-                    'payment_method' => $selected_type
+                $processedList[$transactionType]['name'] = $transactionType;
+
+                $processedList[$transactionType]['parameters'][] = array(
+                    'payment_method' => str_replace($pproSuffix, '', $selectedType)
                 );
             } else {
-                $processed_list[] = $selected_type;
+                $processedList[] = $selectedType;
             }
         }
 
-        return $processed_list;
+        return $processedList;
     }
 
     /**

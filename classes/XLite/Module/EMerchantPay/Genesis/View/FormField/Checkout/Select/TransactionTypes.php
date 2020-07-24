@@ -19,6 +19,10 @@
 
 namespace XLite\Module\EMerchantPay\Genesis\View\FormField\Checkout\Select;
 
+use Genesis\API\Constants\Payment\Methods;
+use Genesis\API\Constants\Transaction\Types;
+use XLite\Module\EMerchantPay\Genesis\Helpers\Helper;
+
 /**
  * Multi-select handling
  */
@@ -34,44 +38,38 @@ class TransactionTypes extends \XLite\View\FormField\Select\Multiple
     {
         require_once LC_DIR_MODULES . '/EMerchantPay/Genesis/Library/Genesis/vendor/autoload.php';
 
-        return array(
-            \Genesis\API\Constants\Transaction\Types::ABNIDEAL      =>
-                static::t('ABN iDEAL'),
-            \Genesis\API\Constants\Transaction\Types::AUTHORIZE     =>
-                static::t('Authorize'),
-            \Genesis\API\Constants\Transaction\Types::AUTHORIZE_3D  =>
-                static::t('Authorize 3D'),
-            \Genesis\API\Constants\Transaction\Types::CASHU         =>
-                static::t('CashU'),
-            \Genesis\API\Constants\Payment\Methods::EPS             =>
-                static::t('eps'),
-            \Genesis\API\Constants\Payment\Methods::GIRO_PAY        =>
-                static::t('GiroPay'),
-            \Genesis\API\Constants\Transaction\Types::NETELLER      =>
-                static::t('Neteller'),
-            \Genesis\API\Constants\Payment\Methods::QIWI            =>
-                static::t('Qiwi'),
-            \Genesis\API\Constants\Transaction\Types::PAYBYVOUCHER_SALE   =>
-                static::t('PayByVoucher (Sale)'),
-            \Genesis\API\Constants\Transaction\Types::PAYSAFECARD   =>
-                static::t('PaySafeCard'),
-            \Genesis\API\Constants\Payment\Methods::PRZELEWY24      =>
-                static::t('Przelewy24'),
-            \Genesis\API\Constants\Transaction\Types::POLI          =>
-                static::t('POLi'),
-            \Genesis\API\Constants\Payment\Methods::SAFETY_PAY      =>
-                static::t('SafetyPay'),
-            \Genesis\API\Constants\Transaction\Types::SALE          =>
-                static::t('Sale'),
-            \Genesis\API\Constants\Transaction\Types::SALE_3D       =>
-                static::t('Sale 3D'),
-            \Genesis\API\Constants\Transaction\Types::SOFORT        =>
-                static::t('SOFORT'),
-            \Genesis\API\Constants\Payment\Methods::TRUST_PAY       =>
-                static::t('TrustPay'),
-            \Genesis\API\Constants\Transaction\Types::WEBMONEY        =>
-                static::t('WebMoney')
+        $data = array();
+
+        $transactionTypes = Types::getWPFTransactionTypes();
+        $excludedTypes    = Helper::getRecurrentTransactionTypes();
+
+        // Exclude PPRO transaction. This is not standalone transaction type
+        array_push($excludedTypes, Types::PPRO);
+
+        // Exclude Transaction Types
+        $transactionTypes = array_diff($transactionTypes, $excludedTypes);
+
+        // Add PPRO types
+        $pproTypes = array_map(
+            function ($type) {
+                return $type . Helper::PPRO_TRANSACTION_SUFFIX;
+            },
+            Methods::getMethods()
         );
+
+        $transactionTypes = array_merge($transactionTypes, $pproTypes);
+        asort($transactionTypes);
+
+        foreach ($transactionTypes as $type) {
+            $name = \Genesis\API\Constants\Transaction\Names::getName($type);
+            if (!Types::isValidTransactionType($type)) {
+                $name = strtoupper($type);
+            }
+
+            $data[$type] = static::t($name);
+        }
+
+        return $data;
     }
 
     /**
