@@ -29,7 +29,7 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
      *
      * @var string
      */
-    const TXN_USG = 'X-Cart Transaction';
+    const TXN_USG = 'Payment via';
 
     /**
      * Transaction CID field
@@ -65,6 +65,13 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
      * @var string
      */
     const CHECKOUT_TEMPLATE_DIR = 'modules/EMerchantPay/Genesis/checkout/';
+
+    /**
+     * Custom transaction id prefix
+     *
+     * @var string
+     */
+    const PLATFORM_TRANSACTION_SUFFIX = '_xc';
 
     /**
      * Get allowed backend transactions
@@ -244,7 +251,7 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
                     ->setTransactionId(md5(microtime()))
                     ->setReferenceId($this->getReferenceValue($transaction, self::REF_UID))
                     ->setRemoteIp($this->getClientIP())
-                    ->setUsage(self::TXN_USG)
+                    ->setUsage($this->getUsage())
                     ->setAmount($this->getFormattedPrice($transaction->getValue()))
                     ->setCurrency($transaction->getPaymentTransaction()->getOrder()->getCurrency()->getCode());
 
@@ -339,7 +346,7 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
                     ->setTransactionId(md5(time()))
                     ->setReferenceId($this->getReferenceValue($transaction, self::REF_UID))
                     ->setRemoteIp($this->getClientIP())
-                    ->setUsage(self::TXN_USG)
+                    ->setUsage($this->getUsage())
                     ->setAmount($this->getFormattedPrice($transaction->getValue()))
                     ->setCurrency($transaction->getPaymentTransaction()->getOrder()->getCurrency()->getCode());
 
@@ -430,7 +437,7 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
                     ->setTransactionId(md5(time()))
                     ->setReferenceId($this->getReferenceValue($transaction, self::REF_UID))
                     ->setRemoteIp($this->getClientIP())
-                    ->setUsage(self::TXN_USG);
+                    ->setUsage($this->getUsage());
 
             $void->execute();
 
@@ -860,10 +867,10 @@ HTML;
     protected function collectInitialPaymentData()
     {
         $data = array(
-            'transaction_id' => $this->getSetting('prefix') . $this->transaction->getPublicTxnId(),
+            'transaction_id' => $this->getGeneratedTransactionId(self::PLATFORM_TRANSACTION_SUFFIX),
             'amount' => $this->getFormattedPrice($this->transaction->getValue()),
             'currency' => $this->transaction->getOrder()->getCurrency()->getCode(),
-            'usage' => self::TXN_USG,
+            'usage' => $this->getUsage(),
             'description' => $this->getOrderSummary($this->transaction->getOrder()),
             'customer_email' => $this->getProfile()->getLogin(),
             'customer_phone' => $this->getCustomerPhone(),
@@ -1173,5 +1180,37 @@ HTML;
     protected function isCoreAboveVersion53()
     {
         return \XLite\Module\EMerchantPay\Genesis\Main::isCoreAboveVersion53();
+    }
+
+    /**
+     * Return store name
+     *
+     * @return string
+     */
+    protected function getStoreName()
+    {
+        return \XLite\Core\Config::getInstance()->Company->company_name;
+    }
+
+    /**
+     * Return transaction id
+     *
+     * @param string $suffix
+     *
+     * @return string
+     */
+    protected function getGeneratedTransactionId($suffix = '')
+    {
+        return $this->getSetting('prefix') . $this->transaction->getPublicTxnId() . $suffix;
+    }
+
+    /**
+     * Return usage of transaction
+     *
+     * @return string
+     */
+    protected function getUsage()
+    {
+        return self::TXN_USG . ' ' . $this->getStoreName();
     }
 }
