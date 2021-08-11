@@ -74,7 +74,8 @@ abstract class AEMerchantPay extends \XLite\View\Model\AModel
             self::SCHEMA_LABEL    => 'Order id prefix',
             // @codingStandardsIgnoreStart
             self::SCHEMA_HELP     =>
-                'You can define a prefix to each order to identify them easily in your shop',
+                'You can define a prefix to each order to identify them easily in your shop. ' .
+                'Some symbols disturb the transaction processing. Try to avoid using: _',
             // @codingStandardsIgnoreEnd
             self::SCHEMA_REQUIRED => false,
         ),

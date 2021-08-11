@@ -372,7 +372,11 @@ class EMerchantPayDirect extends \XLite\Module\EMerchantPay\Genesis\Model\Paymen
 
         $card_info = array();
         $card_info['card_holder'] = $requestData['emerchantpay-direct-card-holder'];
-        $card_info['card_number'] = str_replace("-", "", $requestData['emerchantpay-direct-card-number']);
+        $card_info['card_number'] = str_replace(
+            str_split('- '),
+            '',
+            $requestData['emerchantpay-direct-card-number']
+        );
 
         $card_info['expiration'] = $requestData['emerchantpay-direct-card-expiry'];
 

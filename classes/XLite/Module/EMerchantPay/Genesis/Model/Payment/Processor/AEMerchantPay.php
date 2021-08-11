@@ -71,7 +71,7 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
      *
      * @var string
      */
-    const PLATFORM_TRANSACTION_SUFFIX = '_xc';
+    const PLATFORM_TRANSACTION_SUFFIX = '-xc';
 
     /**
      * Get allowed backend transactions

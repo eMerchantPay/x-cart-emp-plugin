@@ -35,7 +35,7 @@ XLite\Model\Payment\Method:
       - name: mode
         value: test
       - name: prefix
-        value: store_
+        value: store-
       - name: transaction_types
         value: '["authorize", "sale"]'
       - name: wpf_tokenization
@@ -60,6 +60,6 @@ XLite\Model\Payment\Method:
       - name: mode
         value: test
       - name: prefix
-        value: store_
+        value: store-
       - name: transaction_type
         value: 'authorize'
