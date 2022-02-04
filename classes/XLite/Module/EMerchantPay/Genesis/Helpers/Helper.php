@@ -25,6 +25,7 @@ use Genesis\API\Request\Financial\Alternatives\Klarna\Items;
 use XLite\Model\Order;
 use XLite\Model\OrderItem;
 use XLite\Module\CDev\Paypal\Core\Api\Orders\Item;
+use Genesis\API\Constants\Transaction\Parameters\Mobile\GooglePay\PaymentTypes as GooglePaymentTypes;
 
 /**
  * Class Helper
@@ -36,6 +37,13 @@ class Helper
      * PPRO Transactions Suffix
      */
     const PPRO_TRANSACTION_SUFFIX = '_ppro';
+
+    /**
+     * Google Pay transaction prefix and methods
+     */
+    const GOOGLE_PAY_TRANSACTION_PREFIX     = Types::GOOGLE_PAY . '_';
+    const GOOGLE_PAY_PAYMENT_TYPE_AUTHORIZE = GooglePaymentTypes::AUTHORIZE;
+    const GOOGLE_PAY_PAYMENT_TYPE_SALE      = GooglePaymentTypes::SALE;
 
     /**
      * XCart Order Surcharge constants

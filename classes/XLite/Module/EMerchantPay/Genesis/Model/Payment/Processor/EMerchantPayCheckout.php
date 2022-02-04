@@ -442,14 +442,21 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
             $aliasMap[$method . $pproSuffix] = Types::PPRO;
         }
 
+        $aliasMap = array_merge($aliasMap, [
+                Helper::GOOGLE_PAY_TRANSACTION_PREFIX . Helper::GOOGLE_PAY_PAYMENT_TYPE_AUTHORIZE => Types::GOOGLE_PAY,
+                Helper::GOOGLE_PAY_TRANSACTION_PREFIX . Helper::GOOGLE_PAY_PAYMENT_TYPE_SALE      => Types::GOOGLE_PAY
+        ]);
+
         foreach ($selectedTypes as $selectedType) {
             if (array_key_exists($selectedType, $aliasMap)) {
                 $transactionType = $aliasMap[$selectedType];
 
                 $processedList[$transactionType]['name'] = $transactionType;
 
+                $key = Types::GOOGLE_PAY === $transactionType ? 'payment_type' : 'payment_method';
+
                 $processedList[$transactionType]['parameters'][] = array(
-                    'payment_method' => str_replace($pproSuffix, '', $selectedType)
+                    $key => str_replace([$pproSuffix, Helper::GOOGLE_PAY_TRANSACTION_PREFIX], '', $selectedType)
                 );
             } else {
                 $processedList[] = $selectedType;

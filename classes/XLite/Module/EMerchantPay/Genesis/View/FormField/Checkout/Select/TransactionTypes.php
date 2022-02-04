@@ -22,6 +22,7 @@ namespace XLite\Module\EMerchantPay\Genesis\View\FormField\Checkout\Select;
 use Genesis\API\Constants\Payment\Methods;
 use Genesis\API\Constants\Transaction\Types;
 use XLite\Module\EMerchantPay\Genesis\Helpers\Helper;
+use Genesis\API\Constants\Transaction\Parameters\Mobile\GooglePay\PaymentTypes as GooglePaymentTypes;
 
 /**
  * Multi-select handling
@@ -46,6 +47,9 @@ class TransactionTypes extends \XLite\View\FormField\Select\Multiple
         // Exclude PPRO transaction. This is not standalone transaction type
         array_push($excludedTypes, Types::PPRO);
 
+        // Exclude Google Pay transaction. This will serve Google Pay payment methods
+        array_push($excludedTypes, Types::GOOGLE_PAY);
+
         // Exclude Transaction Types
         $transactionTypes = array_diff($transactionTypes, $excludedTypes);
 
@@ -57,7 +61,18 @@ class TransactionTypes extends \XLite\View\FormField\Select\Multiple
             Methods::getMethods()
         );
 
-        $transactionTypes = array_merge($transactionTypes, $pproTypes);
+        // Google Pay Payment Methods
+        $googlePayTypes = array_map(
+            function ($type) {
+                return Helper::GOOGLE_PAY_TRANSACTION_PREFIX . $type;
+            },
+            [
+                GooglePaymentTypes::AUTHORIZE,
+                GooglePaymentTypes::SALE
+            ]
+        );
+
+        $transactionTypes = array_merge($transactionTypes, $pproTypes, $googlePayTypes);
         asort($transactionTypes);
 
         foreach ($transactionTypes as $type) {

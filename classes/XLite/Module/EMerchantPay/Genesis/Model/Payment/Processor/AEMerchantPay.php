@@ -725,6 +725,10 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
 
         $partialFlag = (isset($payment->partial_approval) && $payment->partial_approval) ? true : false;
 
+        if (Types::GOOGLE_PAY === $payment->transaction_type && $this->isGooglePayAuthorize()) {
+            return \XLite\Model\Order\Status\Payment::STATUS_AUTHORIZED;
+        }
+
         if (Types::isAuthorize($payment->transaction_type)) {
             return \XLite\Model\Order\Status\Payment::STATUS_AUTHORIZED;
         }
@@ -775,6 +779,10 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
             )
         );
 
+        if ($payment->transaction_type === Types::GOOGLE_PAY && $this->isGooglePayAuthorize()) {
+            return $typeArray['authorize'];
+        }
+
         if (Types::isAuthorize($payment->transaction_type)) {
             return $typeArray['authorize'];
         }
@@ -796,6 +804,21 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
         }
 
         return '';
+    }
+
+    /**
+     * Check if the selected google pay transaction method is Authorize
+     *
+     * @return bool
+     */
+    protected function isGooglePayAuthorize()
+    {
+        $selectedTransactions = json_decode($this->getSetting('transaction_types'));
+
+        return is_array($selectedTransactions) && in_array(
+            Helper::GOOGLE_PAY_TRANSACTION_PREFIX . Helper::GOOGLE_PAY_PAYMENT_TYPE_AUTHORIZE,
+            $selectedTransactions
+        );
     }
 
     /**
