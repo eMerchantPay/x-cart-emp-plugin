@@ -23,6 +23,7 @@ use Genesis\API\Constants\Payment\Methods;
 use Genesis\API\Constants\Transaction\Types;
 use XLite\Module\EMerchantPay\Genesis\Helpers\Helper;
 use Genesis\API\Constants\Transaction\Parameters\Mobile\GooglePay\PaymentTypes as GooglePaymentTypes;
+use Genesis\API\Constants\Transaction\Parameters\Wallets\PayPal\PaymentTypes as PayPalPaymentTypes;
 
 /**
  * Multi-select handling
@@ -50,6 +51,9 @@ class TransactionTypes extends \XLite\View\FormField\Select\Multiple
         // Exclude Google Pay transaction. This will serve Google Pay payment methods
         array_push($excludedTypes, Types::GOOGLE_PAY);
 
+        // Exclude PayPal transaction. This will serve PayPal payment methods
+        array_push($excludedTypes, Types::PAY_PAL);
+
         // Exclude Transaction Types
         $transactionTypes = array_diff($transactionTypes, $excludedTypes);
 
@@ -72,7 +76,19 @@ class TransactionTypes extends \XLite\View\FormField\Select\Multiple
             ]
         );
 
-        $transactionTypes = array_merge($transactionTypes, $pproTypes, $googlePayTypes);
+        // PayPal Payment Methods
+        $payPalTypes = array_map(
+            function ($type) {
+                return Helper::PAYPAL_TRANSACTION_PREFIX . $type;
+            },
+            [
+                PayPalPaymentTypes::AUTHORIZE,
+                PayPalPaymentTypes::SALE,
+                PayPalPaymentTypes::EXPRESS,
+            ]
+        );
+
+        $transactionTypes = array_merge($transactionTypes, $pproTypes, $googlePayTypes, $payPalTypes);
         asort($transactionTypes);
 
         foreach ($transactionTypes as $type) {

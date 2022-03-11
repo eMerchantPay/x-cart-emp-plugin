@@ -58,6 +58,7 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
                     ->setCustomerPhone($data['customer_phone'])
                     ->setNotificationUrl($data['notification_url'])
                     ->setReturnSuccessUrl($data['return_success_url'])
+                    ->setReturnPendingUrl($data['return_success_url'])
                     ->setReturnFailureUrl($data['return_failure_url'])
                     ->setReturnCancelUrl($data['return_cancel_url'])
                     ->setBillingFirstName($data['billing']['first_name'])
@@ -443,8 +444,11 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
         }
 
         $aliasMap = array_merge($aliasMap, [
-                Helper::GOOGLE_PAY_TRANSACTION_PREFIX . Helper::GOOGLE_PAY_PAYMENT_TYPE_AUTHORIZE => Types::GOOGLE_PAY,
-                Helper::GOOGLE_PAY_TRANSACTION_PREFIX . Helper::GOOGLE_PAY_PAYMENT_TYPE_SALE      => Types::GOOGLE_PAY
+            Helper::GOOGLE_PAY_TRANSACTION_PREFIX . Helper::GOOGLE_PAY_PAYMENT_TYPE_AUTHORIZE => Types::GOOGLE_PAY,
+            Helper::GOOGLE_PAY_TRANSACTION_PREFIX . Helper::GOOGLE_PAY_PAYMENT_TYPE_SALE      => Types::GOOGLE_PAY,
+            Helper::PAYPAL_TRANSACTION_PREFIX     . Helper::PAYPAL_PAYMENT_TYPE_AUTHORIZE     => Types::PAY_PAL,
+            Helper::PAYPAL_TRANSACTION_PREFIX     . Helper::PAYPAL_PAYMENT_TYPE_SALE          => Types::PAY_PAL,
+            Helper::PAYPAL_TRANSACTION_PREFIX     . Helper::PAYPAL_PAYMENT_TYPE_EXPRESS       => Types::PAY_PAL,
         ]);
 
         foreach ($selectedTypes as $selectedType) {
@@ -453,10 +457,18 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
 
                 $processedList[$transactionType]['name'] = $transactionType;
 
-                $key = Types::GOOGLE_PAY === $transactionType ? 'payment_type' : 'payment_method';
+                $key = $this->getCustomParameterKey($transactionType);
 
                 $processedList[$transactionType]['parameters'][] = array(
-                    $key => str_replace([$pproSuffix, Helper::GOOGLE_PAY_TRANSACTION_PREFIX], '', $selectedType)
+                    $key => str_replace(
+                        [
+                            $pproSuffix,
+                            Helper::GOOGLE_PAY_TRANSACTION_PREFIX,
+                            Helper::PAYPAL_TRANSACTION_PREFIX,
+                        ],
+                        '',
+                        $selectedType
+                    )
                 );
             } else {
                 $processedList[] = $selectedType;
@@ -482,5 +494,28 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
         }
 
         return null;
+    }
+
+    /**
+     * @param $transactionType
+     * @return string
+     */
+    private function getCustomParameterKey($transactionType)
+    {
+        switch ($transactionType) {
+            case Types::PPRO:
+                $result = 'payment_method';
+                break;
+            case Types::PAY_PAL:
+                $result = 'payment_type';
+                break;
+            case Types::GOOGLE_PAY:
+                $result = 'payment_subtype';
+                break;
+            default:
+                $result = 'unknown';
+        }
+
+        return $result;
     }
 }

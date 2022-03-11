@@ -26,6 +26,7 @@ use XLite\Model\Order;
 use XLite\Model\OrderItem;
 use XLite\Module\CDev\Paypal\Core\Api\Orders\Item;
 use Genesis\API\Constants\Transaction\Parameters\Mobile\GooglePay\PaymentTypes as GooglePaymentTypes;
+use Genesis\API\Constants\Transaction\Parameters\Wallets\PayPal\PaymentTypes as PayPalPaymentTypes;
 
 /**
  * Class Helper
@@ -44,6 +45,14 @@ class Helper
     const GOOGLE_PAY_TRANSACTION_PREFIX     = Types::GOOGLE_PAY . '_';
     const GOOGLE_PAY_PAYMENT_TYPE_AUTHORIZE = GooglePaymentTypes::AUTHORIZE;
     const GOOGLE_PAY_PAYMENT_TYPE_SALE      = GooglePaymentTypes::SALE;
+
+    /**
+     * PayPal transaction prefix and methods
+     */
+    const PAYPAL_TRANSACTION_PREFIX         = Types::PAY_PAL . '_';
+    const PAYPAL_PAYMENT_TYPE_AUTHORIZE     = PayPalPaymentTypes::AUTHORIZE;
+    const PAYPAL_PAYMENT_TYPE_SALE          = PayPalPaymentTypes::SALE;
+    const PAYPAL_PAYMENT_TYPE_EXPRESS       = PayPalPaymentTypes::EXPRESS;
 
     /**
      * XCart Order Surcharge constants
