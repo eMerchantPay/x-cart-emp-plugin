@@ -733,6 +733,10 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
             return \XLite\Model\Order\Status\Payment::STATUS_AUTHORIZED;
         }
 
+        if (Types::APPLE_PAY === $payment->transaction_type && $this->isApplePayAuthorize()) {
+            return \XLite\Model\Order\Status\Payment::STATUS_AUTHORIZED;
+        }
+
         if (Types::isAuthorize($payment->transaction_type)) {
             return \XLite\Model\Order\Status\Payment::STATUS_AUTHORIZED;
         }
@@ -791,6 +795,10 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
             return $typeArray['authorize'];
         }
 
+        if ($payment->transaction_type === Types::APPLE_PAY && $this->isApplePayAuthorize()) {
+            return $typeArray['authorize'];
+        }
+
         if (Types::isAuthorize($payment->transaction_type)) {
             return $typeArray['authorize'];
         }
@@ -840,6 +848,21 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
 
         return is_array($selectedTransactions) && in_array(
             Helper::PAYPAL_TRANSACTION_PREFIX . Helper::PAYPAL_PAYMENT_TYPE_AUTHORIZE,
+            $selectedTransactions
+        );
+    }
+
+    /**
+     * Check if the selected Apple Pay transaction method is Authorize
+     *
+     * @return bool
+     */
+    protected function isApplePayAuthorize()
+    {
+        $selectedTransactions = json_decode($this->getSetting('transaction_types'));
+
+        return is_array($selectedTransactions) && in_array(
+            Helper::APPLE_PAY_TRANSACTION_PREFIX . Helper::APPLE_PAY_PAYMENT_TYPE_AUTHORIZE,
             $selectedTransactions
         );
     }

@@ -449,6 +449,8 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
             Helper::PAYPAL_TRANSACTION_PREFIX     . Helper::PAYPAL_PAYMENT_TYPE_AUTHORIZE     => Types::PAY_PAL,
             Helper::PAYPAL_TRANSACTION_PREFIX     . Helper::PAYPAL_PAYMENT_TYPE_SALE          => Types::PAY_PAL,
             Helper::PAYPAL_TRANSACTION_PREFIX     . Helper::PAYPAL_PAYMENT_TYPE_EXPRESS       => Types::PAY_PAL,
+            Helper::APPLE_PAY_TRANSACTION_PREFIX  . Helper::APPLE_PAY_PAYMENT_TYPE_AUTHORIZE  => Types::APPLE_PAY,
+            Helper::APPLE_PAY_TRANSACTION_PREFIX  . Helper::APPLE_PAY_PAYMENT_TYPE_SALE       => Types::APPLE_PAY,
         ]);
 
         foreach ($selectedTypes as $selectedType) {
@@ -465,6 +467,7 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
                             $pproSuffix,
                             Helper::GOOGLE_PAY_TRANSACTION_PREFIX,
                             Helper::PAYPAL_TRANSACTION_PREFIX,
+                            Helper::APPLE_PAY_TRANSACTION_PREFIX,
                         ],
                         '',
                         $selectedType
@@ -510,6 +513,7 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
                 $result = 'payment_type';
                 break;
             case Types::GOOGLE_PAY:
+            case Types::APPLE_PAY:
                 $result = 'payment_subtype';
                 break;
             default:

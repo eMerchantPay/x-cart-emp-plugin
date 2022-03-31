@@ -25,6 +25,7 @@ use Genesis\API\Request\Financial\Alternatives\Klarna\Items;
 use XLite\Model\Order;
 use XLite\Model\OrderItem;
 use XLite\Module\CDev\Paypal\Core\Api\Orders\Item;
+use Genesis\API\Constants\Transaction\Parameters\Mobile\ApplePay\PaymentTypes as ApplePaymentTypes;
 use Genesis\API\Constants\Transaction\Parameters\Mobile\GooglePay\PaymentTypes as GooglePaymentTypes;
 use Genesis\API\Constants\Transaction\Parameters\Wallets\PayPal\PaymentTypes as PayPalPaymentTypes;
 
@@ -53,6 +54,13 @@ class Helper
     const PAYPAL_PAYMENT_TYPE_AUTHORIZE     = PayPalPaymentTypes::AUTHORIZE;
     const PAYPAL_PAYMENT_TYPE_SALE          = PayPalPaymentTypes::SALE;
     const PAYPAL_PAYMENT_TYPE_EXPRESS       = PayPalPaymentTypes::EXPRESS;
+
+    /**
+     * Apple Pay transaction prefix and methods
+     */
+    const APPLE_PAY_TRANSACTION_PREFIX      = Types::APPLE_PAY . '_';
+    const APPLE_PAY_PAYMENT_TYPE_AUTHORIZE  = ApplePaymentTypes::AUTHORIZE;
+    const APPLE_PAY_PAYMENT_TYPE_SALE       = ApplePaymentTypes::SALE;
 
     /**
      * XCart Order Surcharge constants
