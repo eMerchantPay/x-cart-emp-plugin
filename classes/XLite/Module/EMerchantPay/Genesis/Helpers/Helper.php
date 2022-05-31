@@ -19,6 +19,7 @@
 
 namespace XLite\Module\EMerchantPay\Genesis\Helpers;
 
+use Genesis\API\Constants\Banks;
 use Genesis\API\Constants\i18n;
 use Genesis\API\Constants\Transaction\Types;
 use Genesis\API\Request\Financial\Alternatives\Klarna\Items;
@@ -176,5 +177,17 @@ class Helper
         }
 
         return $items;
+    }
+
+    /**
+     * List of available bank codes for Online payment method
+     *
+     * @return array
+     */
+    public static function getAvailableBankCodes()
+    {
+        return [
+            Banks::CPI => 'Interac Combined Pay-in',
+        ];
     }
 }

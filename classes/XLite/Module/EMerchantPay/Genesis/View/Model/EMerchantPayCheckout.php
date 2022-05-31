@@ -43,6 +43,14 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\View\Model
                 'You can select which transaction types can be attempted (from the Gateway) upon customer processing',
             self::SCHEMA_REQUIRED => true,
         );
+        $this->schemaAdditional['bank_codes'] = array(
+            self::SCHEMA_CLASS    =>
+                '\XLite\Module\EMerchantPay\Genesis\View\FormField\Checkout\Select\BankCodes',
+            self::SCHEMA_LABEL    => 'Bank codes for Online banking',
+            self::SCHEMA_HELP     =>
+                'You can select one or more Bank codes for Online Banking transaction type.',
+            self::SCHEMA_REQUIRED => true,
+        );
         $this->schemaAdditional['wpf_tokenization'] = array(
             self::SCHEMA_CLASS    => '\XLite\View\FormField\Select\EnabledDisabled',
             self::SCHEMA_LABEL    => 'Tokenization Enabled',

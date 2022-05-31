@@ -21,6 +21,7 @@ namespace XLite\Module\EMerchantPay\Genesis\Model\Payment\Processor;
 
 use Genesis\API\Constants\Payment\Methods;
 use Genesis\API\Constants\Transaction\Types;
+use Genesis\Utils\Common as CommonUtils;
 use XLite\Core\Session;
 use XLite\Module\EMerchantPay\Genesis\Helpers\Helper;
 
@@ -203,6 +204,22 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
                 $parameters = array(
                     'user_id' => $trustlyUserId
                 );
+                break;
+            case Types::ONLINE_BANKING_PAYIN:
+                $selectedBankCodes = array_filter(
+                    json_decode($this->getSetting('bank_codes')),
+                    function ($value) {
+                        return $value != 'none';
+                    }
+                );
+                if (CommonUtils::isValidArray($selectedBankCodes)) {
+                    $parameters['bank_codes'] = array_map(
+                        function ($value) {
+                            return ['bank_code' => $value];
+                        },
+                        $selectedBankCodes
+                    );
+                }
                 break;
         }
 
