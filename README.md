@@ -7,7 +7,7 @@ Requirements
 ------------
 
 * X-Cart 5.4.x (you can get this plugin to work on older 5.2, 5.3 versions simply by changing the __Major Version__ to ```5.2```, ```5.3``` in ```Main.php``` and ```main.yaml```)
-* [GenesisPHP v1.20.1](https://github.com/GenesisGateway/genesis_php/releases/tag/1.20.1) - (Integrated in Module)
+* [GenesisPHP v1.21.2](https://github.com/GenesisGateway/genesis_php/releases/tag/1.21.2) - (Integrated in Module)
 * PCI-certified server in order to use ```emerchantpay Direct```
 
 GenesisPHP Requirements
@@ -106,6 +106,7 @@ Supported Transactions & Payment Methods
   * __PayPal__
   * __PaySafeCard__
   * __PayU__
+  * __Pix__
   * __POLi__
   * __Post Finance__
   * __PPRO__
