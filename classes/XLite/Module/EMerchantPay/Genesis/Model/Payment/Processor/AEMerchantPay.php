@@ -73,6 +73,10 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
      */
     const PLATFORM_TRANSACTION_SUFFIX = '-xc';
 
+    const SETTING_KEY_SCA_EXEMPTION        = 'sca_exemption';
+
+    const SETTING_KEY_SCA_EXEMPTION_AMOUNT = 'sca_exemption_amount';
+
     /**
      * Get allowed backend transactions
      *

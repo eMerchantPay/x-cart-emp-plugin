@@ -58,5 +58,38 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\View\Model
                 'Is Tokenization going to be used for the Web Payment Form?',
             self::SCHEMA_REQUIRED => false,
         );
+        $this->schemaAdditional['wpf_3dsv2_options'] = array(
+            self::SCHEMA_CLASS    => '\XLite\View\FormField\Select\EnabledDisabled',
+            self::SCHEMA_LABEL    => '3DSv2 parameters handling',
+            self::SCHEMA_HELP     =>
+                'Enable/Disable handling of 3DSv2 optional parameters',
+            self::SCHEMA_REQUIRED => false,
+        );
+        $this->schemaAdditional['wpf_challenge_indicator'] = array(
+            self::SCHEMA_CLASS    =>
+                '\XLite\Module\EMerchantPay\Genesis\View\FormField\Checkout\Select\ChallengeIndicator',
+            self::SCHEMA_LABEL    => '3DSv2 Challenge option',
+            self::SCHEMA_HELP     =>
+                'The value has weight and might impact the decision whether' .
+                'a challenge will be required for the transaction or not.' .
+                ' If not provided, it will be interpreted as no_preference.',
+            self::SCHEMA_REQUIRED => false,
+        );
+        $this->schemaAdditional['sca_exemption'] = array(
+            self::SCHEMA_CLASS    =>
+                '\XLite\Module\EMerchantPay\Genesis\View\FormField\Checkout\Select\ScaExemption',
+            self::SCHEMA_LABEL    => 'SCA Exemption option',
+            self::SCHEMA_HELP     =>
+                'SCA Exemption for Strong Customer Authentication',
+            self::SCHEMA_REQUIRED => false,
+        );
+        $this->schemaAdditional['sca_exemption_amount'] = array(
+            self::SCHEMA_CLASS    => '\XLite\View\FormField\Input\Text',
+            self::SCHEMA_LABEL    => 'SCA Exemption amount option',
+            self::SCHEMA_HELP     =>
+                'The exemption amounts to determine'.
+                ' if the SCA Exemption should be included in the request to the Gateway.',
+            self::SCHEMA_REQUIRED => false,
+        );
     }
 }

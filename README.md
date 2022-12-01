@@ -7,7 +7,7 @@ Requirements
 ------------
 
 * X-Cart 5.4.x (you can get this plugin to work on older 5.2, 5.3 versions simply by changing the __Major Version__ to ```5.2```, ```5.3``` in ```Main.php``` and ```main.yaml```)
-* [GenesisPHP v1.21.2](https://github.com/GenesisGateway/genesis_php/releases/tag/1.21.2) - (Integrated in Module)
+* [GenesisPHP v1.21.3](https://github.com/GenesisGateway/genesis_php/releases/tag/1.21.3) - (Integrated in Module)
 * PCI-certified server in order to use ```emerchantpay Direct```
 
 GenesisPHP Requirements
@@ -21,6 +21,8 @@ GenesisPHP Requirements
     * [Hash](https://php.net/hash)
     * [XMLReader](https://php.net/xmlreader)
     * [XMLWriter](https://php.net/xmlwriter)
+    * [JSON](https://www.php.net/manual/en/book.json)
+    * [OpenSSL](https://www.php.net/manual/en/book.openssl.php)
 
 Installation
 ------------
@@ -33,8 +35,6 @@ Installation
 * Under ```Online methods``` category, click ```Add payment method``` and select ```emerchantpay``` from the list
 * Enter your credentials and configure the plugin to your liking
 * Go back to ```Store setup -> Payment methods``` and toggle the ```emerchantpay``` payment method from ```INACTIVE``` to ```ACTIVE```
-* If you wish to use ```emerchantpay Direct```, the SSL of the Front Store must be enabled. 
-If you have already configured a SSL Certificate, go to ```System settings``` -> ```HTTPS settings``` and click ```Enable HTTPS``` in order to be able to process direct payment transactions through our gateway
 
 Installation (Manual)
 ------------
@@ -47,17 +47,9 @@ Installation (Manual)
 * Under ```Online methods``` category, click ```Add payment method``` and select ```emerchantpay``` from the list
 * Enter your credentials and configure the plugin to your liking
 * Go back to ```Store setup -> Payment methods``` and toggle the ```emerchantpay``` payment method from ```INACTIVE``` to ```ACTIVE```
-* If you wish to use ```emerchantpay Direct```, the SSL of the Front Store must be enabled. 
-If you have already configured a SSL Certificate, go to ```System settings``` -> ```HTTPS settings``` and click ```Enable HTTPS``` in order to be able to process direct payment transactions through our gateway
 
 Supported Transactions & Payment Methods
 ---------------------
-* ```emerchantpay Direct``` Payment Method
-  * __Authorize__
-  * __Authorize (3D-Secure)__
-  * __Sale__
-  * __Sale (3D-Secure)__
-
 * ```emerchantpay Checkout``` Payment Method
   * __Apple Pay__
   * __Argencard__

@@ -42,6 +42,14 @@ XLite\Model\Payment\Method:
         value: '["none"]'
       - name: wpf_tokenization
         value: N
+      - name: wpf_3dsv2_options
+        value: Y
+      - name: challenge_indicator
+        value: ['no_preference']
+      - name: sca_exemption
+        value: ['low_risk']
+      - name: sca_exemption_amount
+        value: '100'
 
   - service_name: EMerchantPayDirect
     class: Module\EMerchantPay\Genesis\Model\Payment\Processor\EMerchantPayDirect

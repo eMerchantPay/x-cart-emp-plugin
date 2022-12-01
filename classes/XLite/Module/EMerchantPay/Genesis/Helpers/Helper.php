@@ -71,6 +71,11 @@ class Helper
     const XCART_SURCHARGE_SHOPPING = 'shipping';
 
     /**
+     * 3DSv2 date format
+     */
+    const THREEDS_DATE_FORMAT = 'Y-m-d H:i:s';
+
+    /**
      * Retrieve the Recurrent transaction types
      *
      * @return array
@@ -94,11 +99,56 @@ class Helper
         return i18n::getAll();
     }
 
+    /**
+     * Get profile object
+     *
+     * @return mixed
+     */
+    public static function getProfile()
+    {
+        return \XLite\Core\Auth::getInstance()->getProfile();
+    }
+
+    /**
+     * Return currently logged profile ID
+     *
+     * @return int
+     */
     public static function getCurrentUserId()
     {
-        $profile = \XLite\Core\Auth::getInstance()->getProfile();
+        $profile = self::getProfile();
 
         return $profile ? $profile->getProfileId() : 0;
+    }
+
+    /**
+     * Get profile date added
+     *
+     * @return false|string
+     */
+    public static function getCustomerCreatedAt()
+    {
+        return date(self::THREEDS_DATE_FORMAT, self::getProfile()->getAdded());
+    }
+
+    /**
+     * Check that customer is guest
+     *
+     * @return bool
+     */
+    public static function isGuestCustomer()
+    {
+        return self::getProfile() ? self::getProfile()->getAnonymous() : true;
+    }
+
+    /**
+     * Get last change date of profile
+     *
+     * @return mixed
+     */
+    public static function getProfilePasswordChangeDate()
+    {
+        return self::getProfile()->getPasswordResetKeyDate();
     }
 
     /**

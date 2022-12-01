@@ -24,6 +24,10 @@ use Genesis\API\Constants\Transaction\Types;
 use Genesis\Utils\Common as CommonUtils;
 use XLite\Core\Session;
 use XLite\Module\EMerchantPay\Genesis\Helpers\Helper;
+use XLite\Module\EMerchantPay\Genesis\Helpers\ThreedsHelper;
+use Genesis\API\Constants\Transaction\Parameters\Threeds\V2\MerchantRisk\DeliveryTimeframes;
+use Genesis\API\Constants\Transaction\Parameters\Threeds\V2\Purchase\Categories;
+use Genesis\API\Constants\Transaction\Parameters\Threeds\V2\CardHolderAccount\RegistrationIndicators;
 
 /**
  * emerchantpay Checkout Payment Method
@@ -32,6 +36,12 @@ use XLite\Module\EMerchantPay\Genesis\Helpers\Helper;
  */
 class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Payment\Processor\AEMerchantPay
 {
+
+    /**
+     * Payment method name
+     */
+    const PAYMENT_METHOD_NAME = 'emerchantpay_checkout';
+
     /**
      * Create payment method transaction
      *
@@ -96,6 +106,12 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
                 }
             }
 
+            if ($this->getSetting('wpf_3dsv2_options')) {
+                $this->addThreedsOptionalParameters($genesis);
+            }
+
+            $this->addScaExemptionParameters($genesis);
+
             $genesis->execute();
 
             $gatewayResponseObject = $genesis->response()->getResponseObject();
@@ -110,7 +126,7 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
                         ? $gatewayResponseObject->message
                         : '';
 
-                throw new \Exception ($errorMessage);
+                throw new \Exception($errorMessage);
             }
         } catch (\Genesis\Exceptions\ErrorAPI $e) {
             $errorMessage = $e->getMessage() ?: static::t('Invalid data, please check your input.');
@@ -131,6 +147,8 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
             );
             $this->transaction->setNote($errorMessage);
         }
+
+        $this->setPaymentMethodName();
 
         return $status;
     }
@@ -380,9 +398,15 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
     }
 
     /**
-     * Set the Terminal Token parameter
-     *
      * @param \XLite\Model\Payment\BackendTransaction $transaction
+     *
+     * @throws \Genesis\Exceptions\DeprecatedMethod
+     * @throws \Genesis\Exceptions\ErrorAPI
+     * @throws \Genesis\Exceptions\ErrorParameter
+     * @throws \Genesis\Exceptions\InvalidArgument
+     * @throws \Genesis\Exceptions\InvalidClassMethod
+     * @throws \Genesis\Exceptions\InvalidMethod
+     * @throws \Genesis\Exceptions\InvalidResponse
      */
     protected function setTerminalToken(\XLite\Model\Payment\BackendTransaction $transaction)
     {
@@ -538,5 +562,93 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
         }
 
         return $result;
+    }
+
+    /**
+     * @param $genesis
+     *
+     * @throws \Exception
+     */
+    protected function addThreedsOptionalParameters($genesis)
+    {
+        $threeds = new ThreedsHelper($this->transaction);
+
+        $genesis
+            ->request()
+            // Challenge Indicator
+            ->setThreedsV2ControlChallengeIndicator(
+                $this->getSetting('wpf_challenge_indicator')
+            )
+            // Purchase
+            ->setThreedsV2PurchaseCategory(
+                $threeds->hasPhysicalProduct() ?
+                    Categories::GOODS :
+                    Categories::SERVICE
+            )
+            // Merchant_risk
+            ->setThreedsV2MerchantRiskShippingIndicator($threeds->fetchShippingIndicator())
+            ->setThreedsV2MerchantRiskDeliveryTimeframe(
+                $threeds->hasPhysicalProduct() ?
+                    DeliveryTimeframes::ANOTHER_DAY :
+                    DeliveryTimeframes::ELECTRONICS
+            )
+            ->setThreedsV2MerchantRiskReorderItemsIndicator($threeds->fetchReorderItemsIndicator());
+
+        if (!Helper::isGuestCustomer()) {
+            // CardHolder Account
+            $genesis->request()
+                    ->setThreedsV2CardHolderAccountCreationDate(Helper::getCustomerCreatedAt())
+                    ->setThreedsV2CardHolderAccountUpdateIndicator($threeds->fetchUpdateIndicator())
+                    ->setThreedsV2CardHolderAccountLastChangeDate($threeds->getLastChangeDate())
+                    ->setThreedsV2CardHolderAccountPasswordChangeIndicator($threeds->fetchPasswordChangeIndicator())
+                    ->setThreedsV2CardHolderAccountPasswordChangeDate($threeds->getPasswordChangeDate())
+                    ->setThreedsV2CardHolderAccountShippingAddressUsageIndicator(
+                        $threeds->fetchShippingAddressUsageIndicator()
+                    )
+                    ->setThreedsV2CardHolderAccountShippingAddressDateFirstUsed($threeds->getProfileFirstOrderDate())
+                    ->setThreedsV2CardHolderAccountTransactionsActivityLast24Hours(
+                        $threeds->countOrdersPeriod(ThreedsHelper::ACTIVITY_24_HOURS)
+                    )
+                    ->setThreedsV2CardHolderAccountTransactionsActivityPreviousYear(
+                        $threeds->countOrdersPeriod(ThreedsHelper::ACTIVITY_1_YEAR)
+                    )
+                    ->setThreedsV2CardHolderAccountPurchasesCountLast6Months(
+                        $threeds->countOrdersPeriod(ThreedsHelper::ACTIVITY_6_MONTHS)
+                    )
+                    ->setThreedsV2CardHolderAccountRegistrationDate(
+                        $threeds->getProfileFirstOrderDate()
+                    );
+        }
+
+        $genesis
+            ->request()
+            ->setThreedsV2CardHolderAccountRegistrationIndicator(
+                Helper::isGuestCustomer() ? RegistrationIndicators::GUEST_CHECKOUT :
+                    $threeds->fetchRegistrationIndicator()
+            );
+    }
+  
+    /*
+     * Add SCA Exemption parameter to Genesis Request
+     *
+     * @param $genesis
+     */
+    private function addScaExemptionParameters($genesis)
+    {
+        $wpfAmount         = (float) $genesis->request()->getAmount();
+        $scaExemption      = $this->getSetting(self::SETTING_KEY_SCA_EXEMPTION);
+        $scaExemptionValue = (float) $this->getSetting(self::SETTING_KEY_SCA_EXEMPTION_AMOUNT);
+
+        if ($wpfAmount <= $scaExemptionValue) {
+            $genesis->request()->setScaExemption($scaExemption);
+        }
+    }
+
+    /**
+     * Set payment method name during transaction
+     */
+    private function setPaymentMethodName()
+    {
+        $this->transaction->getOrder()->setPaymentMethodName(self::PAYMENT_METHOD_NAME);
     }
 }
