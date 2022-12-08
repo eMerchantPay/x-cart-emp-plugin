@@ -45,9 +45,9 @@ XLite\Model\Payment\Method:
       - name: wpf_3dsv2_options
         value: Y
       - name: challenge_indicator
-        value: ['no_preference']
+        value: 'no_preference'
       - name: sca_exemption
-        value: ['low_risk']
+        value: 'low_risk'
       - name: sca_exemption_amount
         value: '100'
 

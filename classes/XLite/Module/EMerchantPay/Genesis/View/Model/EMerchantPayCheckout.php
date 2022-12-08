@@ -65,7 +65,7 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\View\Model
                 'Enable/Disable handling of 3DSv2 optional parameters',
             self::SCHEMA_REQUIRED => false,
         );
-        $this->schemaAdditional['wpf_challenge_indicator'] = array(
+        $this->schemaAdditional['challenge_indicator'] = array(
             self::SCHEMA_CLASS    =>
                 '\XLite\Module\EMerchantPay\Genesis\View\FormField\Checkout\Select\ChallengeIndicator',
             self::SCHEMA_LABEL    => '3DSv2 Challenge option',

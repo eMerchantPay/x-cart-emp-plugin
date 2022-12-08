@@ -577,7 +577,7 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
             ->request()
             // Challenge Indicator
             ->setThreedsV2ControlChallengeIndicator(
-                $this->getSetting('wpf_challenge_indicator')
+                $this->getSetting('challenge_indicator')
             )
             // Purchase
             ->setThreedsV2PurchaseCategory(
