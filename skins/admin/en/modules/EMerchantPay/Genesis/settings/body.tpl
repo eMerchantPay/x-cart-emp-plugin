@@ -22,18 +22,6 @@
 
 <div class="payment-settings EMerchantPay">
 
-    {if:getShouldDisplayMessage()}
-        <div class="{getDisplayMessageClass()}" role="alert">
-            <span class="status-message-before"></span>
-
-            <div class="table-label">
-                <label>{getDisplayMessageText()}</label>
-            </div>
-
-            <span class="status-message-after"></span>
-        </div>
-    {end:}
-
     <div class="payment-settings-controls-container">
         <widget class="{getModelFormClass()}" paymentMethod="{getPaymentMethod()}" />
     </div>

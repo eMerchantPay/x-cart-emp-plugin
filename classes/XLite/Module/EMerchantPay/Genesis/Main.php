@@ -28,8 +28,6 @@ abstract class Main extends \XLite\Module\AModule
      * Name of the emerchantpay Checkout method
      */
     const EMP_CHECKOUT = 'EMerchantPayCheckout';
-    const EMP_DIRECT = 'EMerchantPayDirect';
-
 
     /**
      * Author name
@@ -78,7 +76,7 @@ abstract class Main extends \XLite\Module\AModule
      */
     public static function getMinorVersion()
     {
-        return '1';
+        return '2';
     }
 
     /**
@@ -88,7 +86,7 @@ abstract class Main extends \XLite\Module\AModule
      */
     public static function getBuildVersion()
     {
-        return '9';
+        return '0';
     }
 
     /**
@@ -148,30 +146,6 @@ abstract class Main extends \XLite\Module\AModule
 
         if (!isset($result[$index])) {
             $paymentMethod = self::getPaymentMethod(self::EMP_CHECKOUT, true);
-
-            if ($order && $result[$index]) {
-                $result[$index] = $paymentMethod->getProcessor()->isApplicable($order, $paymentMethod);
-            }
-        }
-
-        return $result[$index];
-    }
-
-    /**
-     * Returns true if emerchantpayDirect payment is enabled
-     *
-     * @param \XLite\Model\Cart $order Cart object OPTIONAL
-     *
-     * @return boolean
-     */
-    public static function isEmerchantpayDirectEnabled($order = null)
-    {
-        static $result;
-
-        $index = isset($order) ? 1 : 0;
-
-        if (!isset($result[$index])) {
-            $paymentMethod = self::getPaymentMethod(self::EMP_DIRECT, true);
 
             if ($order && $result[$index]) {
                 $result[$index] = $paymentMethod->getProcessor()->isApplicable($order, $paymentMethod);

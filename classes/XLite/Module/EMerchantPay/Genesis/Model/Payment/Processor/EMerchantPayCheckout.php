@@ -73,7 +73,7 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
                     ->setReturnFailureUrl($data['return_failure_url'])
                     ->setReturnCancelUrl($data['return_cancel_url'])
                     ->setBillingFirstName($data['billing']['first_name'])
-                    ->setBillingLastName($data['billing']['first_name'])
+                    ->setBillingLastName($data['billing']['last_name'])
                     ->setBillingAddress1($data['billing']['address1'])
                     ->setBillingAddress2($data['billing']['address2'])
                     ->setBillingZipCode($data['billing']['zip_code'])
@@ -605,7 +605,9 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
                     ->setThreedsV2CardHolderAccountShippingAddressUsageIndicator(
                         $threeds->fetchShippingAddressUsageIndicator()
                     )
-                    ->setThreedsV2CardHolderAccountShippingAddressDateFirstUsed($threeds->getProfileFirstOrderDate())
+                    ->setThreedsV2CardHolderAccountShippingAddressDateFirstUsed(
+                        $threeds->getShippingAddressDateFirstUsed()
+                    )
                     ->setThreedsV2CardHolderAccountTransactionsActivityLast24Hours(
                         $threeds->countOrdersPeriod(ThreedsHelper::ACTIVITY_24_HOURS)
                     )

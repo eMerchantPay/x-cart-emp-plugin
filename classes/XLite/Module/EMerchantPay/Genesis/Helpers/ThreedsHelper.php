@@ -143,7 +143,9 @@ class ThreedsHelper
      */
     public function fetchShippingAddressUsageIndicator()
     {
-        return $this->treedsIndicatorHelper->fetchShippingAddressUsageIndicator($this->getProfileFirstOrderDate());
+        return $this->treedsIndicatorHelper->fetchShippingAddressUsageIndicator(
+            $this->getShippingAddressDateFirstUsed()
+        );
     }
 
     /**
@@ -207,8 +209,8 @@ class ThreedsHelper
             $previousYear = $this->getPreviousYear();
 
             $searchCondition->{\XLite\Model\Repo\Order::P_DATE} = array(
-                $previousYear['from'],
-                $previousYear['to'],
+                $previousYear['from']->getTimestamp(),
+                $previousYear['to']->getTimestamp(),
             );
         }
 
@@ -228,17 +230,14 @@ class ThreedsHelper
     /**
      * Get profile order history
      *
-     * @return mixed
+     * @return array
      */
     public function getProfileOrders()
     {
-        $paidStatuses = \XLite\Model\Order\Status\Payment::getPaidStatuses();
-
         $searchCondition                                                   = new CommonCell();
         $searchCondition->{\XLite\Model\Repo\Order::P_PROFILE_ID}          = Helper::getCurrentUserId();
         $searchCondition->{\XLite\Model\Repo\Order::P_PAYMENT_METHOD_NAME} = EMerchantPayCheckout::PAYMENT_METHOD_NAME;
-        $searchCondition->{\XLite\Model\Repo\Order::P_PAYMENT_STATUS}      = $paidStatuses;
-
+        $searchCondition->{\XLite\Model\Repo\AttributeOption::P_ORDER_BY}  = ['o.date', 'ASC'];
 
         return \XLite\Core\Database::getRepo('XLite\Model\Order')->search($searchCondition);
     }
@@ -274,11 +273,35 @@ class ThreedsHelper
     }
 
     /**
-     * @return false|string|null
+     * Get the date when current shipping address is used for a first time
+     *
+     * @return string
+     */
+    public function getShippingAddressDateFirstUsed()
+    {
+        $firstUsageDate         = date(Helper::THREEDS_DATE_FORMAT, time());
+        $orders                 = $this->profileOrders;
+        $profileShippingAddress = $this->transaction->getOrder()->getProfile()->getShippingAddress();
+
+        foreach ($orders as $order) {
+            $orderShippingAddress = $order->getProfile()->getShippingAddress();
+            if ($this->areAddressesSame($profileShippingAddress, $orderShippingAddress)) {
+                $firstUsageDate = date(Helper::THREEDS_DATE_FORMAT, $order->getDate());
+                break;
+            }
+        }
+
+        return $firstUsageDate;
+    }
+
+    /**
+     * Get Customer's first order date
+     *
+     * @return string|null
      */
     public function getProfileFirstOrderDate()
     {
-        return ($this->profileOrders[0] !== null)
+        return (count($this->profileOrders) > 0)
             ? date(Helper::THREEDS_DATE_FORMAT, $this->profileOrders[0]->getDate())
             : null;
     }
@@ -293,5 +316,37 @@ class ThreedsHelper
         $dateTo    = \DateTime::createFromFormat(Helper::THREEDS_DATE_FORMAT, "$previousYear-12-31 23:59:59");
 
         return ['from' => $dateFrom, 'to' => $dateTo];
+    }
+
+    /**
+     * Check if the given addresses are equal
+     *
+     * @param object $orderAddress
+     * @param object $profileAddress
+     *
+     * @return bool
+     */
+    private function areAddressesSame($orderAddress, $profileAddress)
+    {
+        $result = false;
+
+        if (null !== $orderAddress && null !== $profileAddress) {
+            $result = true;
+
+            if ($orderAddress->getAddressId() != $profileAddress->getAddressId()) {
+                $addressFields = $orderAddress->getAvailableAddressFields();
+
+                foreach ($addressFields as $name) {
+                    $methodName = 'get' . \XLite\Core\Converter::getInstance()->convertToCamelCase($name);
+                    // Compare field values of both addresses
+                    if ($orderAddress->$methodName() != $profileAddress->$methodName()) {
+                        $result = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $result;
     }
 }

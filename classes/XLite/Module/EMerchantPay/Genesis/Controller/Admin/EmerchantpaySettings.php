@@ -46,40 +46,6 @@ class EmerchantpaySettings extends \XLite\Controller\Admin\AAdmin
     }
 
     /**
-     * Get Should Display Message While Configuring the Module
-     *
-     * @return boolean
-     */
-    public function getShouldDisplayMessage()
-    {
-        return ($this->getPaymentMethod()->getServiceName() == \XLite\Module\EMerchantPay\Genesis\Main::EMP_DIRECT);
-    }
-
-    /**
-     * Returns message style class
-     *
-     * @return string
-     */
-    public function getDisplayMessageClass()
-    {
-        return \XLite\Module\EMerchantPay\Genesis\Main::isStoreOverSecuredConnection()
-            ? 'alert alert-warning'
-            : 'alert alert-danger';
-    }
-
-    /**
-     * Returns message text
-     *
-     * @return string
-     */
-    public function getDisplayMessageText()
-    {
-        return \XLite\Module\EMerchantPay\Genesis\Main::isStoreOverSecuredConnection()
-            ? 'HTTPS connection is enabled. You need PCI-DSS certificate in order to use this payment method'
-            : 'This payment method requires HTTPS connection in order to process payment data! ';
-    }
-
-    /**
      * Returns Author Website
      *
      * @return string

@@ -50,12 +50,6 @@
   display: inline-block;
 }
 
-.payment-settings-help-container .logo-EMerchantPayDirect {
-  background: transparent url(../images/emerchantpay_direct.png) no-repeat center center;
-  height: 30pt;
-  padding-top: 50pt;
-}
-
 .payment-settings-help-container .logo-EMerchantPayCheckout {
   background: transparent url(../images/emerchantpay_checkout.png) no-repeat center center;
   height: 30pt;

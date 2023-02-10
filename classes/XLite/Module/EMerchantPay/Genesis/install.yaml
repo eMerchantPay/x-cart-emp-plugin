@@ -50,26 +50,3 @@ XLite\Model\Payment\Method:
         value: 'low_risk'
       - name: sca_exemption_amount
         value: '100'
-
-  - service_name: EMerchantPayDirect
-    class: Module\EMerchantPay\Genesis\Model\Payment\Processor\EMerchantPayDirect
-    type: C
-    orderby: -10650
-    translations:
-      - code: en
-        name: 'emerchantpay Direct'
-        title: 'emerchantpay Direct'
-        description: 'emerchantpay offers a secure way to pay for your order, using Credit/Debit Card'
-        altAdminDescription: 'Direct API - allow customers to enter their CreditCard information on your website. Note: You need PCI-DSS certificate in order to enable this payment method.'
-    settings:
-      - name: title
-        value: 'emerchantpay Direct'
-      - name: username
-      - name: secret
-      - name: token
-      - name: mode
-        value: test
-      - name: prefix
-        value: store-
-      - name: transaction_type
-        value: 'authorize'
