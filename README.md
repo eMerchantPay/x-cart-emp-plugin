@@ -7,7 +7,7 @@ Requirements
 ------------
 
 * X-Cart 5.4.x (you can get this plugin to work on older 5.2, 5.3 versions simply by changing the __Major Version__ to ```5.2```, ```5.3``` in ```Main.php``` and ```main.yaml```)
-* [GenesisPHP v1.21.4](https://github.com/GenesisGateway/genesis_php/releases/tag/1.21.4) - (Integrated in Module)
+* [GenesisPHP v1.21.6](https://github.com/GenesisGateway/genesis_php/releases/tag/1.21.6) - (Integrated in Module)
 
 GenesisPHP Requirements
 ------------
@@ -91,6 +91,7 @@ Supported Transactions & Payment Methods
   * __Neteller__
   * __Online Banking__
     * __Interac Combined Pay-in (CPI)__ 
+    * __Bancontact (BCT)__ 
   * __OXXO__
   * __P24__
   * __Pago Facil__

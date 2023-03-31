@@ -23,68 +23,31 @@
  * @license     http://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Genesis\API\Traits\Request\NonFinancial;
+namespace Genesis\API\Constants\NonFinancial\KYC;
 
-use Genesis\API\Constants\NonFinancial\KYC\PaymentMethods;
-use Genesis\Exceptions\InvalidArgument;
+use Genesis\Utils\Common;
 
 /**
- * Trait DepositLimits
- * @package Genesis\API\Traits\Request\NonFinancial
+ * Class CVVPresents
+ * @package Genesis\API\Constants\NonFinancial\KYC
  */
-trait DepositLimits
+class CVVPresents
 {
     /**
      * @var string
      */
-    protected $payment_method;
+    const YES = 'Yes';
 
     /**
      * @var string
      */
-    protected $minimum;
+    const NO  = 'No';
 
     /**
-     * @var string
+     * @return array
      */
-    protected $daily_maximum;
-
-    /**
-     * @var string
-     */
-    protected $weekly_maximum;
-
-    /**
-     * @var string
-     */
-    protected $monthly_maximum;
-
-    /**
-     * CC; EC; EW - CreditCard; Echeck; EWallet
-     *
-     * @param $method
-     *
-     * @return $this
-     * @throws InvalidArgument
-     */
-    public function setPaymentMethod($method)
+    public static function getAll()
     {
-        return $this->allowedOptionsSetter(
-            'payment_method',
-            PaymentMethods::getAll(),
-            $method,
-            'Invalid payment method provided.'
-        );
-    }
-
-    public function getDepositLimitsStructure()
-    {
-        return [
-            'payment_method'  => $this->payment_method,
-            'minimum'         => $this->minimum,
-            'daily_maximum'   => $this->daily_maximum,
-            'weekly_maximum'  => $this->weekly_maximum,
-            'monthly_maximum' => $this->monthly_maximum
-        ];
+        return Common::getClassConstants(self::class);
     }
 }

@@ -23,68 +23,84 @@
  * @license     http://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Genesis\API\Traits\Request\NonFinancial;
+namespace Genesis\API\Constants\NonFinancial\KYC;
 
-use Genesis\API\Constants\NonFinancial\KYC\PaymentMethods;
-use Genesis\Exceptions\InvalidArgument;
+use Genesis\Utils\Common;
 
 /**
- * Trait DepositLimits
- * @package Genesis\API\Traits\Request\NonFinancial
+ * Class IndustryTypes
+ * @package Genesis\API\Constants\NonFinancial\KYC
  */
-trait DepositLimits
+class IndustryTypes
 {
     /**
-     * @var string
-     */
-    protected $payment_method;
-
-    /**
-     * @var string
-     */
-    protected $minimum;
-
-    /**
-     * @var string
-     */
-    protected $daily_maximum;
-
-    /**
-     * @var string
-     */
-    protected $weekly_maximum;
-
-    /**
-     * @var string
-     */
-    protected $monthly_maximum;
-
-    /**
-     * CC; EC; EW - CreditCard; Echeck; EWallet
+     * Financial services
      *
-     * @param $method
-     *
-     * @return $this
-     * @throws InvalidArgument
+     * @var int
      */
-    public function setPaymentMethod($method)
-    {
-        return $this->allowedOptionsSetter(
-            'payment_method',
-            PaymentMethods::getAll(),
-            $method,
-            'Invalid payment method provided.'
-        );
-    }
+    const FINANCE = 1;
 
-    public function getDepositLimitsStructure()
+    /**
+     * Gambling industry
+     *
+     * @var int
+     */
+    const GAMBLING = 2;
+
+    /**
+     * Crypto trading
+     *
+     * @var int
+     */
+    const CRYPTO = 3;
+
+    /**
+     * Travel
+     *
+     * @var int
+     */
+    const TRAVEL = 4;
+
+    /**
+     * Retail industry
+     *
+     * @var int
+     */
+    const RETAIL = 5;
+
+    /**
+     * Risk Vendor
+     *
+     * @var int
+     */
+    const RISK_VENDOR = 6;
+
+    /**
+     * Adult
+     *
+     * @var int
+     */
+    const ADULT = 7;
+
+    /**
+     * Remittance/Transfer
+     *
+     * @var int
+     */
+    const REMITTANCE_TRANSFER = 8;
+
+    /**
+     * Other
+     *
+     * @var int
+     */
+    const OTHER = 9;
+
+    /**
+     * @return array
+     */
+    public static function getAll()
     {
-        return [
-            'payment_method'  => $this->payment_method,
-            'minimum'         => $this->minimum,
-            'daily_maximum'   => $this->daily_maximum,
-            'weekly_maximum'  => $this->weekly_maximum,
-            'monthly_maximum' => $this->monthly_maximum
-        ];
+        return Common::getClassConstants(self::class);
     }
 }

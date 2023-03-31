@@ -23,68 +23,56 @@
  * @license     http://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Genesis\API\Traits\Request\NonFinancial;
+namespace Genesis\API\Constants\NonFinancial\KYC;
 
-use Genesis\API\Constants\NonFinancial\KYC\PaymentMethods;
-use Genesis\Exceptions\InvalidArgument;
+use Genesis\Utils\Common;
 
 /**
- * Trait DepositLimits
- * @package Genesis\API\Traits\Request\NonFinancial
+ * Class CallVerificationStatuses
+ * @package Genesis\API\Constants\NonFinancial\KYC
  */
-trait DepositLimits
+class CallVerificationStatuses
 {
     /**
-     * @var string
-     */
-    protected $payment_method;
-
-    /**
-     * @var string
-     */
-    protected $minimum;
-
-    /**
-     * @var string
-     */
-    protected $daily_maximum;
-
-    /**
-     * @var string
-     */
-    protected $weekly_maximum;
-
-    /**
-     * @var string
-     */
-    protected $monthly_maximum;
-
-    /**
-     * CC; EC; EW - CreditCard; Echeck; EWallet
+     * In progress
      *
-     * @param $method
-     *
-     * @return $this
-     * @throws InvalidArgument
+     * @var int
      */
-    public function setPaymentMethod($method)
-    {
-        return $this->allowedOptionsSetter(
-            'payment_method',
-            PaymentMethods::getAll(),
-            $method,
-            'Invalid payment method provided.'
-        );
-    }
+    const IN_PROGRESS = 1;
 
-    public function getDepositLimitsStructure()
+    /**
+     * Failed
+     *
+     * @var int
+     */
+    const FAILED = 2;
+
+    /**
+     * Verification fail
+     *
+     * @var int
+     */
+    const VERIFICATION_FAILED = 3;
+
+    /**
+     * Verification successful
+     *
+     * @var int
+     */
+    const VERIFICATION_SUCCESS = 4;
+
+    /**
+     * Abandoned
+     *
+     * @var int
+     */
+    const ABANDON = 5;
+
+    /**
+     * @return array
+     */
+    public static function getAll()
     {
-        return [
-            'payment_method'  => $this->payment_method,
-            'minimum'         => $this->minimum,
-            'daily_maximum'   => $this->daily_maximum,
-            'weekly_maximum'  => $this->weekly_maximum,
-            'monthly_maximum' => $this->monthly_maximum
-        ];
+        return Common::getClassConstants(self::class);
     }
 }

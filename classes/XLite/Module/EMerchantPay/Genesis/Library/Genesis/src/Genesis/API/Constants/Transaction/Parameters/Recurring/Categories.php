@@ -23,68 +23,38 @@
  * @license     http://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Genesis\API\Traits\Request\NonFinancial;
-
-use Genesis\API\Constants\NonFinancial\KYC\PaymentMethods;
-use Genesis\Exceptions\InvalidArgument;
+namespace Genesis\API\Constants\Transaction\Parameters\Recurring;
 
 /**
- * Trait DepositLimits
- * @package Genesis\API\Traits\Request\NonFinancial
+ * List of available Recurring Categories
+ *
+ * Specifies whether the recurring transaction is a subscription(fixed amount, fixed intervals)or if it is a standing
+ * order(varying amount, fixed intervals).
+ *
+ * class Types
  */
-trait DepositLimits
+class Categories
 {
     /**
-     * @var string
+     * Recurring Category Subscription - fixed amount, fixed intervals
      */
-    protected $payment_method;
+    const SUBSCRIPTION   = 'subscription';
 
     /**
-     * @var string
+     * Recurring Category Stangin Order - varying amount, fixed intervals
      */
-    protected $minimum;
+    const STANDING_ORDER = 'standing_order';
 
     /**
-     * @var string
-     */
-    protected $daily_maximum;
-
-    /**
-     * @var string
-     */
-    protected $weekly_maximum;
-
-    /**
-     * @var string
-     */
-    protected $monthly_maximum;
-
-    /**
-     * CC; EC; EW - CreditCard; Echeck; EWallet
+     * Return all available recurring categories
      *
-     * @param $method
-     *
-     * @return $this
-     * @throws InvalidArgument
+     * @return array
      */
-    public function setPaymentMethod($method)
+    public static function getAll()
     {
-        return $this->allowedOptionsSetter(
-            'payment_method',
-            PaymentMethods::getAll(),
-            $method,
-            'Invalid payment method provided.'
+        return array(
+            self::SUBSCRIPTION,
+            self::STANDING_ORDER
         );
-    }
-
-    public function getDepositLimitsStructure()
-    {
-        return [
-            'payment_method'  => $this->payment_method,
-            'minimum'         => $this->minimum,
-            'daily_maximum'   => $this->daily_maximum,
-            'weekly_maximum'  => $this->weekly_maximum,
-            'monthly_maximum' => $this->monthly_maximum
-        ];
     }
 }

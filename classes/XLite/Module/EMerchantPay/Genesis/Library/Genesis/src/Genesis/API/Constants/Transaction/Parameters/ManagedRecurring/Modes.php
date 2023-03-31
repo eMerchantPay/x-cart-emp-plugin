@@ -23,68 +23,39 @@
  * @license     http://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Genesis\API\Traits\Request\NonFinancial;
-
-use Genesis\API\Constants\NonFinancial\KYC\PaymentMethods;
-use Genesis\Exceptions\InvalidArgument;
+namespace Genesis\API\Constants\Transaction\Parameters\ManagedRecurring;
 
 /**
- * Trait DepositLimits
- * @package Genesis\API\Traits\Request\NonFinancial
+ * class Modes
+ *
+ * Managed Recurring available Modes
+ *
+ * @package Genesis\API\Constants\Transaction\Parameters\ManagedRecurring
  */
-trait DepositLimits
+class Modes
 {
     /**
-     * @var string
+     * Managed Recurring Mode Automatic. Mandatory use with Recurring Type Managed.
+     * This indicates that the gateway will automatically manage the subsequent recurring transactions.
      */
-    protected $payment_method;
+    const AUTOMATIC = 'automatic';
 
     /**
-     * @var string
+     * Manager Recurring Mode Manual. Mandatory use with Indian Cards.
+     * This indicates that the merchant will manually manage the subsequent recurring transactions.
      */
-    protected $minimum;
+    const MANUAL    = 'manual';
 
     /**
-     * @var string
-     */
-    protected $daily_maximum;
-
-    /**
-     * @var string
-     */
-    protected $weekly_maximum;
-
-    /**
-     * @var string
-     */
-    protected $monthly_maximum;
-
-    /**
-     * CC; EC; EW - CreditCard; Echeck; EWallet
+     * Get all available Modes
      *
-     * @param $method
-     *
-     * @return $this
-     * @throws InvalidArgument
+     * @return array
      */
-    public function setPaymentMethod($method)
+    public static function getAll()
     {
-        return $this->allowedOptionsSetter(
-            'payment_method',
-            PaymentMethods::getAll(),
-            $method,
-            'Invalid payment method provided.'
+        return array(
+            self::MANUAL,
+            self::AUTOMATIC
         );
-    }
-
-    public function getDepositLimitsStructure()
-    {
-        return [
-            'payment_method'  => $this->payment_method,
-            'minimum'         => $this->minimum,
-            'daily_maximum'   => $this->daily_maximum,
-            'weekly_maximum'  => $this->weekly_maximum,
-            'monthly_maximum' => $this->monthly_maximum
-        ];
     }
 }

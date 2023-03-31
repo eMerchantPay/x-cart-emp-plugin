@@ -23,68 +23,98 @@
  * @license     http://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Genesis\API\Traits\Request\NonFinancial;
+namespace Genesis\API\Constants\NonFinancial\KYC;
 
-use Genesis\API\Constants\NonFinancial\KYC\PaymentMethods;
-use Genesis\Exceptions\InvalidArgument;
+use Genesis\Utils\Common;
 
 /**
- * Trait DepositLimits
- * @package Genesis\API\Traits\Request\NonFinancial
+ * Class DocumentTypes
+ * @package Genesis\API\Constants\NonFinancial\KYC
  */
-trait DepositLimits
+class DocumentTypes
 {
     /**
-     * @var string
-     */
-    protected $payment_method;
-
-    /**
-     * @var string
-     */
-    protected $minimum;
-
-    /**
-     * @var string
-     */
-    protected $daily_maximum;
-
-    /**
-     * @var string
-     */
-    protected $weekly_maximum;
-
-    /**
-     * @var string
-     */
-    protected $monthly_maximum;
-
-    /**
-     * CC; EC; EW - CreditCard; Echeck; EWallet
+     * SSN
      *
-     * @param $method
-     *
-     * @return $this
-     * @throws InvalidArgument
+     * @var int
      */
-    public function setPaymentMethod($method)
-    {
-        return $this->allowedOptionsSetter(
-            'payment_method',
-            PaymentMethods::getAll(),
-            $method,
-            'Invalid payment method provided.'
-        );
-    }
+    const SSN = 0;
 
-    public function getDepositLimitsStructure()
+    /**
+     * Passport Registry
+     *
+     * @var int
+     */
+    const PASSPORT_REGISTRY = 1;
+
+    /**
+     * Personal ID / National ID
+     *
+     * @var int
+     */
+    const PERSONAL_ID = 2;
+
+    /**
+     * Identity Card
+     *
+     * @var int
+     */
+    const IDENTITY_CARD = 3;
+
+    /**
+     * Driver License
+     *
+     * @var int
+     */
+    const DRIVER_LICENSE = 4;
+
+    /**
+     * Travel Document
+     *
+     * @var int
+     */
+    const TRAVEL_DOCUMENT = 8;
+
+    /**
+     * Residence Permit
+     *
+     * @var int
+     */
+    const RESIDENCE_PERMIT = 12;
+
+    /**
+     * Identity Certificate
+     *
+     * @var int
+     */
+    const IDENTITY_CERTIFICATE = 13;
+
+    /**
+     * Registro Federal de Contribuyentes
+     *
+     * @var int
+     */
+    const FEDERAL_REGISTER = 16;
+
+    /**
+     * Credencial de Elector
+     *
+     * @var int
+     */
+    const ELECTRON_CREDENTIALS = 17;
+
+    /**
+     * CPF
+     *
+     * @var int
+     */
+    const CPF = 18;
+
+    /**
+     * @return array
+     */
+    public static function getAll()
     {
-        return [
-            'payment_method'  => $this->payment_method,
-            'minimum'         => $this->minimum,
-            'daily_maximum'   => $this->daily_maximum,
-            'weekly_maximum'  => $this->weekly_maximum,
-            'monthly_maximum' => $this->monthly_maximum
-        ];
+        return Common::getClassConstants(self::class);
     }
 }

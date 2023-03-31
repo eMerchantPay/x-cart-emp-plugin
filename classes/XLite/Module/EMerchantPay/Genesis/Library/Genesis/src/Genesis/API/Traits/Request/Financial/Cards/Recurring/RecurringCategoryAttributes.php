@@ -23,68 +23,50 @@
  * @license     http://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Genesis\API\Traits\Request\NonFinancial;
+namespace Genesis\API\Traits\Request\Financial\Cards\Recurring;
 
-use Genesis\API\Constants\NonFinancial\KYC\PaymentMethods;
+use Genesis\API\Constants\Transaction\Parameters\Recurring\Categories;
 use Genesis\Exceptions\InvalidArgument;
 
 /**
- * Trait DepositLimits
- * @package Genesis\API\Traits\Request\NonFinancial
+ * trait RecurringCategoryAttributes
+ *
+ * Specifies whether the recurring transaction is a subscription(fixed amount, fixed intervals)or if it is a standing
+ * order(varying amount, fixed intervals).
+ *
+ * @package Genesis\API\Traits\Request\Financial\Cards\Recurring
+ *
+ * @method string|null getRecurringCategory() Specifies whether the recurring is a subscription or standing order
  */
-trait DepositLimits
+trait RecurringCategoryAttributes
 {
     /**
-     * @var string
-     */
-    protected $payment_method;
-
-    /**
-     * @var string
-     */
-    protected $minimum;
-
-    /**
-     * @var string
-     */
-    protected $daily_maximum;
-
-    /**
-     * @var string
-     */
-    protected $weekly_maximum;
-
-    /**
-     * @var string
-     */
-    protected $monthly_maximum;
-
-    /**
-     * CC; EC; EW - CreditCard; Echeck; EWallet
+     * Specifies whether the recurring transaction is a subscription or standing order
      *
-     * @param $method
+     * @var string
+     */
+    protected $recurring_category;
+
+    /**
+     * Specifies whether the recurring transaction is a subscription or standing order
      *
+     * @param $value
      * @return $this
      * @throws InvalidArgument
      */
-    public function setPaymentMethod($method)
+    public function setRecurringCategory($value)
     {
-        return $this->allowedOptionsSetter(
-            'payment_method',
-            PaymentMethods::getAll(),
-            $method,
-            'Invalid payment method provided.'
-        );
-    }
+        if (empty($value)) {
+            $this->recurring_category = null;
 
-    public function getDepositLimitsStructure()
-    {
-        return [
-            'payment_method'  => $this->payment_method,
-            'minimum'         => $this->minimum,
-            'daily_maximum'   => $this->daily_maximum,
-            'weekly_maximum'  => $this->weekly_maximum,
-            'monthly_maximum' => $this->monthly_maximum
-        ];
+            return $this;
+        }
+
+        return $this->allowedOptionsSetter(
+            'recurring_category',
+            Categories::getAll(),
+            $value,
+            'Invalid value given for Recurring Category.'
+        );
     }
 }

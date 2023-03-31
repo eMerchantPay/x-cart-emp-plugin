@@ -23,68 +23,52 @@
  * @license     http://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Genesis\API\Traits\Request\NonFinancial;
-
-use Genesis\API\Constants\NonFinancial\KYC\PaymentMethods;
-use Genesis\Exceptions\InvalidArgument;
+namespace Genesis\API\Constants\Transaction\Parameters\Recurring;
 
 /**
- * Trait DepositLimits
- * @package Genesis\API\Traits\Request\NonFinancial
+ * List of available Recurring Types
+ *
+ * class Types
  */
-trait DepositLimits
+class Types
 {
     /**
-     * @var string
+     * Indication for an Initial Recurring Transaction. Respond to Init_Recurring
      */
-    protected $payment_method;
+    const INITIAL    = 'initial';
 
     /**
-     * @var string
+     * Indication for a Managed Recurring Transaction. Respond to Managed Recurring transactions.
      */
-    protected $minimum;
+    const MANAGED    = 'managed';
 
     /**
-     * @var string
+     * Indication for a Subsequent Transaction on the Initial Recurring. Respond to subsequent Recurring payments.
      */
-    protected $daily_maximum;
+    const SUBSEQUENT = 'subsequent';
 
     /**
-     * @var string
-     */
-    protected $weekly_maximum;
-
-    /**
-     * @var string
-     */
-    protected $monthly_maximum;
-
-    /**
-     * CC; EC; EW - CreditCard; Echeck; EWallet
+     * Return all Initial Recurring Types
      *
-     * @param $method
-     *
-     * @return $this
-     * @throws InvalidArgument
+     * @return string[]
      */
-    public function setPaymentMethod($method)
+    public static function getInitialTypes()
     {
-        return $this->allowedOptionsSetter(
-            'payment_method',
-            PaymentMethods::getAll(),
-            $method,
-            'Invalid payment method provided.'
+        return array(
+            self::INITIAL,
+            self::MANAGED
         );
     }
 
-    public function getDepositLimitsStructure()
+    /**
+     * Return all Subsequent Types
+     *
+     * @return string[]
+     */
+    public static function getSubsequentTypes()
     {
-        return [
-            'payment_method'  => $this->payment_method,
-            'minimum'         => $this->minimum,
-            'daily_maximum'   => $this->daily_maximum,
-            'weekly_maximum'  => $this->weekly_maximum,
-            'monthly_maximum' => $this->monthly_maximum
-        ];
+        return array(
+            self::SUBSEQUENT
+        );
     }
 }

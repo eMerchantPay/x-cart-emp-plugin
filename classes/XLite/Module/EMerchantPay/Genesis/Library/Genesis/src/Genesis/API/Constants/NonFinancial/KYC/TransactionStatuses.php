@@ -22,74 +22,120 @@
  * @copyright   Copyright (C) 2015-2023 emerchantpay Ltd.
  * @license     http://opensource.org/licenses/MIT The MIT License
  */
-namespace Genesis\API\Constants\Payment;
+
+namespace Genesis\API\Constants\NonFinancial\KYC;
+
+use Genesis\Utils\Common;
 
 /**
- * Class Methods
- *
- * Payment methods for Genesis Transactions
- *
- * @package Genesis\API\Constants\Transaction
+ * Class TransactionStatuses
+ * @package Genesis\API\Constants\NonFinancial\KYC
  */
-class Methods
+class TransactionStatuses
 {
     /**
-     * e-payment standard
+     * Approved
      *
-     * PPRO transaction
+     * @var int
      */
-    const EPS = 'eps';
+    const APPROVED = 1;
 
     /**
-     * GiroPay
+     * Pre-Auth
      *
-     * PPRO transaction
+     * @var int
      */
-    const GIRO_PAY = 'giropay';
+    const PRE_AUTH = 2;
 
     /**
-     * iDEAL
+     * Settled
      *
-     * PPRO transaction
+     * @var int
      */
-    const IDEAL = 'ideal';
+    const SETTLED = 3;
 
     /**
-     * Przelewy24
+     * Void
      *
-     * PPRO transaction
+     * @var int
      */
-    const PRZELEWY24 = 'przelewy24';
+    const VOID = 4;
 
     /**
-     * SafetyPay
+     * Rejected internally by Negative Database or other scrubber decided to reject the transaction
      *
-     * PPRO transaction
+     * @var int
      */
-    const SAFETY_PAY = 'safetypay';
+    const REJECTED = 5;
 
     /**
-     * Mr.Cash
+     * Declined the bank / gateway / processor rejected the transaction
      *
-     * PPRO transaction
+     * @var int
      */
-    const BCMC = 'bcmc';
+    const DECLINED = 6;
 
     /**
-     * MyBank
+     * Chargeback
      *
-     * PPRO transaction
+     * @var int
      */
-    const MYBANK = 'mybank';
+    const CHARGEBACK = 7;
 
     /**
-     * Returns all available payment methods
+     * Return
+     *
+     * @var int
+     */
+    const RETURN     = 8;
+
+    /**
+     * Pending
+     *
+     * @var int
+     */
+    const PENDING = 9;
+
+    /**
+     * Pass Transaction validation
+     *
+     * @var int
+     */
+    const PASS = 10;
+
+    /**
+     * Failed ransaction validation
+     *
+     * @var int
+     */
+    const FAILED = 11;
+
+    /**
+     * Refund
+     *
+     * @var int
+     */
+    const REFUND = 12;
+
+    /**
+     * Approved Review
+     *
+     * @var int
+     */
+    const APPROVED_REVIEW = 13;
+
+    /**
+     * Abandon - This status is used when the user just leaves the transaction
+     *
+     * @var int
+     */
+    const ABANDON = 14;
+
+    /**
      * @return array
      */
-    public static function getMethods()
+    public static function getAll()
     {
-        $methods = \Genesis\Utils\Common::getClassConstants(__CLASS__);
-
-        return array_values($methods);
+        return Common::getClassConstants(self::class);
     }
 }
