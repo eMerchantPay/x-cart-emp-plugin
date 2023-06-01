@@ -7,7 +7,7 @@ Requirements
 ------------
 
 * X-Cart 5.4.x (you can get this plugin to work on older 5.2, 5.3 versions simply by changing the __Major Version__ to ```5.2```, ```5.3``` in ```Main.php``` and ```main.yaml```)
-* [GenesisPHP v1.21.6](https://github.com/GenesisGateway/genesis_php/releases/tag/1.21.6) - (Integrated in Module)
+* [GenesisPHP v1.21.7](https://github.com/GenesisGateway/genesis_php/releases/tag/1.21.7) - (Integrated in Module)
 
 GenesisPHP Requirements
 ------------
