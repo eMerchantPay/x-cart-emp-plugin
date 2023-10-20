@@ -239,6 +239,7 @@ class Helper
         return [
             Banks::CPI => 'Interac Combined Pay-in',
             Banks::BCT => 'Bancontact',
+            Banks::BLK => 'Blik One Click',
         ];
     }
 }
