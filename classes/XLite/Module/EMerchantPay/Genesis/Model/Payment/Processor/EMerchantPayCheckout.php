@@ -239,6 +239,15 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
                     );
                 }
                 break;
+            case \Genesis\API\Constants\Transaction\Types::PAYSAFECARD:
+                $userId     = Helper::getCurrentUserId();
+                $customerId = empty($userId) ?
+                     Helper::getCurrentUserIdHash($this->transaction->getOrder()->getPaymentTransactionId()) : $userId;
+
+                $parameters = array(
+                    'customer_id' => $customerId
+                );
+                break;
         }
 
         return $parameters;
