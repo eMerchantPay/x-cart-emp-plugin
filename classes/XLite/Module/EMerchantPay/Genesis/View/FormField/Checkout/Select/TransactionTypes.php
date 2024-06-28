@@ -19,12 +19,12 @@
 
 namespace XLite\Module\EMerchantPay\Genesis\View\FormField\Checkout\Select;
 
-use Genesis\API\Constants\Payment\Methods;
-use Genesis\API\Constants\Transaction\Types;
+use Genesis\Api\Constants\Payment\Methods;
+use Genesis\Api\Constants\Transaction\Types;
 use XLite\Module\EMerchantPay\Genesis\Helpers\Helper;
-use Genesis\API\Constants\Transaction\Parameters\Mobile\ApplePay\PaymentTypes as ApplePaymentTypes;
-use Genesis\API\Constants\Transaction\Parameters\Mobile\GooglePay\PaymentTypes as GooglePaymentTypes;
-use Genesis\API\Constants\Transaction\Parameters\Wallets\PayPal\PaymentTypes as PayPalPaymentTypes;
+use Genesis\Api\Constants\Transaction\Parameters\Mobile\ApplePay\PaymentTypes as ApplePaymentTypes;
+use Genesis\Api\Constants\Transaction\Parameters\Mobile\GooglePay\PaymentTypes as GooglePaymentTypes;
+use Genesis\Api\Constants\Transaction\Parameters\Wallets\PayPal\PaymentTypes as PayPalPaymentTypes;
 
 /**
  * Multi-select handling
@@ -113,7 +113,7 @@ class TransactionTypes extends \XLite\View\FormField\Select\Multiple
         asort($transactionTypes);
 
         foreach ($transactionTypes as $type) {
-            $name = \Genesis\API\Constants\Transaction\Names::getName($type);
+            $name = \Genesis\Api\Constants\Transaction\Names::getName($type);
             if (!Types::isValidTransactionType($type)) {
                 $name = strtoupper($type);
             }

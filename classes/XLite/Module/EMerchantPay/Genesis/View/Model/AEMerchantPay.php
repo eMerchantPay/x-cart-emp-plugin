@@ -19,6 +19,8 @@
 
 namespace XLite\Module\EMerchantPay\Genesis\View\Model;
 
+use XLite\View\Button\Submit;
+
 abstract class AEMerchantPay extends \XLite\View\Model\AModel
 {
     const PARAM_PAYMENT_METHOD = 'paymentMethod';
@@ -198,7 +200,7 @@ abstract class AEMerchantPay extends \XLite\View\Model\AModel
     {
         $result = parent::getFormButtons();
 
-        $result['submit'] = new \XLite\View\Button\Submit(
+        $result['submit'] = new Submit(
             array(
                 \XLite\View\Button\AButton::PARAM_LABEL    => static::t('Save changes'),
                 \XLite\View\Button\AButton::PARAM_BTN_TYPE => 'regular-main-button',

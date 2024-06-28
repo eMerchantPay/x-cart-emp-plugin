@@ -19,6 +19,8 @@
 
 namespace XLite\Module\EMerchantPay\Genesis\Helpers;
 
+use DateInterval;
+use DateTime;
 use XLite\Core\CommonCell;
 use XLite\Module\EMerchantPay\Genesis\Model\Payment\Processor\EMerchantPayCheckout;
 
@@ -197,7 +199,7 @@ class ThreedsHelper
      */
     public function countOrdersPeriod($period)
     {
-        $dateFrom             = (new \DateTime())->sub(new \DateInterval($period));
+        $dateFrom             = (new DateTime())->sub(new DateInterval($period));
         $searchCondition      = new CommonCell();
 
         $searchCondition->{\XLite\Model\Repo\Order::P_DATE} = array(

@@ -19,16 +19,17 @@
 
 namespace XLite\Module\EMerchantPay\Genesis\Helpers;
 
-use Genesis\API\Constants\Banks;
-use Genesis\API\Constants\i18n;
-use Genesis\API\Constants\Transaction\Types;
-use Genesis\API\Request\Financial\Alternatives\Klarna\Items;
+use Genesis\Api\Constants\Banks;
+use Genesis\Api\Constants\i18n;
+use Genesis\Api\Constants\Transaction\Types;
+use Genesis\Api\Request\Financial\Alternatives\Klarna\Item as KlarnaItem;
+use Genesis\Api\Request\Financial\Alternatives\Klarna\Items;
 use XLite\Model\Order;
 use XLite\Model\OrderItem;
 use XLite\Module\CDev\Paypal\Core\Api\Orders\Item;
-use Genesis\API\Constants\Transaction\Parameters\Mobile\ApplePay\PaymentTypes as ApplePaymentTypes;
-use Genesis\API\Constants\Transaction\Parameters\Mobile\GooglePay\PaymentTypes as GooglePaymentTypes;
-use Genesis\API\Constants\Transaction\Parameters\Wallets\PayPal\PaymentTypes as PayPalPaymentTypes;
+use Genesis\Api\Constants\Transaction\Parameters\Mobile\ApplePay\PaymentTypes as ApplePaymentTypes;
+use Genesis\Api\Constants\Transaction\Parameters\Mobile\GooglePay\PaymentTypes as GooglePaymentTypes;
+use Genesis\Api\Constants\Transaction\Parameters\Wallets\PayPal\PaymentTypes as PayPalPaymentTypes;
 
 /**
  * Class Helper
@@ -179,11 +180,11 @@ class Helper
 
         /** @var OrderItem $item */
         foreach ($itemsList as $item) {
-            $klarnaItem = new \Genesis\API\Request\Financial\Alternatives\Klarna\Item(
+            $klarnaItem = new KlarnaItem(
                 $item->getName(),
                 $item->isShippable() ?
-                    \Genesis\API\Request\Financial\Alternatives\Klarna\Item::ITEM_TYPE_PHYSICAL :
-                    \Genesis\API\Request\Financial\Alternatives\Klarna\Item::ITEM_TYPE_DIGITAL,
+                    KlarnaItem::ITEM_TYPE_PHYSICAL :
+                    KlarnaItem::ITEM_TYPE_DIGITAL,
                 $item->getAmount(),
                 $item->getPrice()
             );
@@ -193,9 +194,9 @@ class Helper
         $taxes = floatval($order->getSurchargesSubtotal(self::XCART_SURCHARGE_TAX));
         if ($taxes) {
             $items->addItem(
-                new \Genesis\API\Request\Financial\Alternatives\Klarna\Item(
+                new KlarnaItem(
                     'Taxes',
-                    \Genesis\API\Request\Financial\Alternatives\Klarna\Item::ITEM_TYPE_SURCHARGE,
+                    KlarnaItem::ITEM_TYPE_SURCHARGE,
                     1,
                     $taxes
                 )
@@ -205,9 +206,9 @@ class Helper
         $discount = floatval($order->getSurchargesSubtotal(self::XCART_SURCHARGE_DISCOUNT));
         if ($discount) {
             $items->addItem(
-                new \Genesis\API\Request\Financial\Alternatives\Klarna\Item(
+                new KlarnaItem(
                     'Discount',
-                    \Genesis\API\Request\Financial\Alternatives\Klarna\Item::ITEM_TYPE_DISCOUNT,
+                    KlarnaItem::ITEM_TYPE_DISCOUNT,
                     1,
                     -$discount
                 )
@@ -217,9 +218,9 @@ class Helper
         $shipping_cost = floatval($order->getSurchargesSubtotal(self::XCART_SURCHARGE_SHOPPING));
         if ($shipping_cost) {
             $items->addItem(
-                new \Genesis\API\Request\Financial\Alternatives\Klarna\Item(
+                new KlarnaItem(
                     'Shipping Costs',
-                    \Genesis\API\Request\Financial\Alternatives\Klarna\Item::ITEM_TYPE_SHIPPING_FEE,
+                    KlarnaItem::ITEM_TYPE_SHIPPING_FEE,
                     1,
                     $shipping_cost
                 )

@@ -19,7 +19,7 @@
 
 namespace XLite\Module\EMerchantPay\Genesis\View\FormField\Checkout\Select;
 
-use Genesis\API\Constants\Transaction\Parameters\Threeds\V2\Control\ChallengeIndicators;
+use Genesis\Api\Constants\Transaction\Parameters\Threeds\V2\Control\ChallengeIndicators;
 
 class ChallengeIndicator extends \XLite\View\FormField\Select\Regular
 {

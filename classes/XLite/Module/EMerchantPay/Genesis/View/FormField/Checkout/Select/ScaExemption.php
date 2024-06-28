@@ -19,7 +19,7 @@
 
 namespace XLite\Module\EMerchantPay\Genesis\View\FormField\Checkout\Select;
 
-use Genesis\API\Constants\Transaction\Parameters\ScaExemptions;
+use Genesis\Api\Constants\Transaction\Parameters\ScaExemptions;
 
 /**
  * Class ScaExemption

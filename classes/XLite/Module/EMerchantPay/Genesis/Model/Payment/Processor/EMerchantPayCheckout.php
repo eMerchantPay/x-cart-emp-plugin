@@ -19,20 +19,26 @@
 
 namespace XLite\Module\EMerchantPay\Genesis\Model\Payment\Processor;
 
-use Genesis\API\Constants\Payment\Methods;
-use Genesis\API\Constants\Transaction\Types;
+use Genesis\Api\Constants\Payment\Methods;
+use Genesis\Api\Constants\Transaction\Types;
 use Genesis\Utils\Common as CommonUtils;
 use XLite\Core\Session;
 use XLite\Module\EMerchantPay\Genesis\Helpers\Helper;
 use XLite\Module\EMerchantPay\Genesis\Helpers\ThreedsHelper;
-use Genesis\API\Constants\Transaction\Parameters\Threeds\V2\MerchantRisk\DeliveryTimeframes;
-use Genesis\API\Constants\Transaction\Parameters\Threeds\V2\Purchase\Categories;
-use Genesis\API\Constants\Transaction\Parameters\Threeds\V2\CardHolderAccount\RegistrationIndicators;
+use Genesis\Api\Constants\Transaction\Parameters\Threeds\V2\CardHolderAccount\RegistrationIndicators;
+use Genesis\Api\Constants\Transaction\Parameters\Threeds\V2\MerchantRisk\DeliveryTimeframes;
+use Genesis\Api\Constants\Transaction\Parameters\Threeds\V2\Purchase\Categories;
+use Genesis\Genesis;
+use Genesis\Api\Constants\Transaction\States;
+use Exception;
 
 /**
  * emerchantpay Checkout Payment Method
  *
  * @package XLite\Module\EMerchantPay\Genesis\Model\Payment\Processor
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Payment\Processor\AEMerchantPay
 {
@@ -54,7 +60,7 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
         $this->initLibrary();
 
         try {
-            $genesis = new \Genesis\Genesis('WPF\Create');
+            $genesis = new Genesis('Wpf\Create');
 
             $data = $this->collectInitialPaymentData();
 
@@ -116,29 +122,23 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
 
             $gatewayResponseObject = $genesis->response()->getResponseObject();
 
-            if (isset($gatewayResponseObject->redirect_url)) {
-                $status = self::PROLONGATION;
-
-                $this->redirectToURL($genesis->response()->getResponseObject()->redirect_url);
-            } else {
+            if (!$genesis->response()->isSuccessful() || empty($gatewayResponseObject->redirect_url)) {
                 $errorMessage =
                     isset($gatewayResponseObject->message)
                         ? $gatewayResponseObject->message
                         : '';
 
-                throw new \Exception($errorMessage);
+                throw new Exception($errorMessage);
             }
-        } catch (\Genesis\Exceptions\ErrorAPI $e) {
-            $errorMessage = $e->getMessage() ?: static::t('Invalid data, please check your input.');
-            $this->transaction->setDataCell(
-                'status',
-                $errorMessage,
-                null,
-                static::FAILED
-            );
-            $this->transaction->setNote($errorMessage);
+
+            $status = self::PROLONGATION;
+
+            $this->redirectToURL($genesis->response()->getResponseObject()->redirect_url);
         } catch (\Exception $e) {
-            $errorMessage = static::t('Failed to initialize payment session, please contact support. ' .$e->getMessage());
+            $errorMessage = static::t(
+                'Failed to initialize payment session, please contact support. '
+                . $e->getMessage()
+            );
             $this->transaction->setDataCell(
                 'status',
                 $errorMessage,
@@ -187,34 +187,27 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
      * @param $transactionType
      * @return array
      * @throws \Exception
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function getCustomRequiredParameters($transactionType)
     {
         $parameters = array();
 
         switch ($transactionType) {
-            case \Genesis\API\Constants\Transaction\Types::PAYBYVOUCHER_SALE:
-                $parameters = array(
-                    'card_type'   =>
-                        \Genesis\API\Constants\Transaction\Parameters\PayByVouchers\CardTypes::VIRTUAL,
-                    'redeem_type' =>
-                        \Genesis\API\Constants\Transaction\Parameters\PayByVouchers\RedeemTypes::INSTANT
-                );
-                break;
-            case \Genesis\API\Constants\Transaction\Types::IDEBIT_PAYIN:
-            case \Genesis\API\Constants\Transaction\Types::INSTA_DEBIT_PAYIN:
+            case \Genesis\Api\Constants\Transaction\Types::IDEBIT_PAYIN:
+            case \Genesis\Api\Constants\Transaction\Types::INSTA_DEBIT_PAYIN:
                 $parameters = array(
                     'customer_account_id' => Helper::getCurrentUserIdHash(
                         $this->transaction->getOrder()->getPaymentTransactionId()
                     )
                 );
                 break;
-            case \Genesis\API\Constants\Transaction\Types::KLARNA_AUTHORIZE:
+            case \Genesis\Api\Constants\Transaction\Types::KLARNA_AUTHORIZE:
                 $parameters = Helper::getKlarnaCustomParamItems(
                     $this->transaction->getOrder()
                 )->toArray();
                 break;
-            case \Genesis\API\Constants\Transaction\Types::TRUSTLY_SALE:
+            case \Genesis\Api\Constants\Transaction\Types::TRUSTLY_SALE:
                 $userId        = Helper::getCurrentUserId();
                 $trustlyUserId = empty($userId) ?
                     Helper::getCurrentUserIdHash($this->transaction->getOrder()->getPaymentTransactionId()) : $userId;
@@ -239,7 +232,7 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
                     );
                 }
                 break;
-            case \Genesis\API\Constants\Transaction\Types::PAYSAFECARD:
+            case \Genesis\Api\Constants\Transaction\Types::PAYSAFECARD:
                 $userId     = Helper::getCurrentUserId();
                 $customerId = empty($userId) ?
                      Helper::getCurrentUserIdHash($this->transaction->getOrder()->getPaymentTransactionId()) : $userId;
@@ -263,7 +256,7 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
     protected static function getConsumerIdFromGenesisGateway($email)
     {
         try {
-            $genesis = new \Genesis\Genesis('NonFinancial\Consumers\Retrieve');
+            $genesis = new Genesis('NonFinancial\Consumers\Retrieve');
             $genesis->request()->setEmail($email);
 
             $genesis->execute();
@@ -289,7 +282,7 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
      */
     protected static function isErrorResponse($response)
     {
-        $state = new \Genesis\API\Constants\Transaction\States($response->status);
+        $state = new States($response->status);
 
         return $state->isError();
     }
@@ -410,7 +403,6 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
      * @param \XLite\Model\Payment\BackendTransaction $transaction
      *
      * @throws \Genesis\Exceptions\DeprecatedMethod
-     * @throws \Genesis\Exceptions\ErrorAPI
      * @throws \Genesis\Exceptions\ErrorParameter
      * @throws \Genesis\Exceptions\InvalidArgument
      * @throws \Genesis\Exceptions\InvalidClassMethod
@@ -425,7 +417,7 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
             $unique_id = $transaction->getPaymentTransaction()->getDataCell(self::REF_UID);
 
             if (isset($unique_id)) {
-                $reconcile = new \Genesis\Genesis('WPF\Reconcile');
+                $reconcile = new Genesis('Wpf\Reconcile');
 
                 $reconcile->request()->setUniqueId($unique_id->getValue());
 
@@ -673,7 +665,7 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
      */
     private function orderCardTransactionTypes($selected_types)
     {
-        $custom_order = \Genesis\API\Constants\Transaction\Types::getCardTransactionTypes();
+        $custom_order = \Genesis\Api\Constants\Transaction\Types::getCardTransactionTypes();
 
         asort($selected_types);
 

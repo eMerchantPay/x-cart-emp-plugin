@@ -48,4 +48,5 @@
     <rule ref="rulesets/unusedcode.xml"/>
 
     <exclude-pattern>*/Genesis/src/*</exclude-pattern>
+    <exclude-pattern>*/vendor/*</exclude-pattern>
 </ruleset>

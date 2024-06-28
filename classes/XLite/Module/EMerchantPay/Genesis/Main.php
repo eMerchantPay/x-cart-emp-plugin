@@ -86,7 +86,7 @@ abstract class Main extends \XLite\Module\AModule
      */
     public static function getBuildVersion()
     {
-        return '4';
+        return '5';
     }
 
     /**
@@ -127,7 +127,7 @@ abstract class Main extends \XLite\Module\AModule
             $condition['enabled'] = (bool) $enabled;
         }
 
-        return $paymentMethod = \XLite\Core\Database::getRepo('XLite\Model\Payment\Method')
+        return \XLite\Core\Database::getRepo('XLite\Model\Payment\Method')
                                                     ->findOneBy($condition);
     }
 

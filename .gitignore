@@ -1,2 +1,5 @@
 .idea
 .DS_Store
+vendor/
+phpcs_report.xml
+phpmd_report.xml

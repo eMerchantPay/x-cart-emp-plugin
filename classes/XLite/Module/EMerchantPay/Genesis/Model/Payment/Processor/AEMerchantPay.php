@@ -19,9 +19,19 @@
 
 namespace XLite\Module\EMerchantPay\Genesis\Model\Payment\Processor;
 
-use Genesis\API\Constants\Transaction\Types;
+use Genesis\Api\Constants\Transaction\Types;
 use XLite\Module\EMerchantPay\Genesis\Helpers\Helper;
+use Genesis\Genesis;
+use Genesis\Api\Notification;
+use Exception;
 
+/**
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+ * @SuppressWarnings(PHPMD.NPathComplexity)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
 {
     /**
@@ -108,6 +118,7 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
      * @param boolean                       $justAdded  Flag if the method is just added via administration panel.
      *
      * @return string
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getConfigurationURL(\XLite\Model\Payment\Method $method, $justAdded = false)
     {
@@ -139,6 +150,7 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
      * @param \XLite\Model\Payment\Method $method Payment method
      *
      * @return boolean
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function isAvailable(\XLite\Model\Payment\Method $method)
     {
@@ -187,6 +199,7 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
      * @param \XLite\Model\Payment\Method $method Payment method
      *
      * @return string
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getAdminIconURL(\XLite\Model\Payment\Method $method)
     {
@@ -220,10 +233,10 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
      * @param \XLite\Model\Payment\BackendTransaction $transaction
      *
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function doBeforeCapture(\XLite\Model\Payment\BackendTransaction $transaction)
     {
-
     }
 
     /**
@@ -246,7 +259,7 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
 
         try {
             // Genesis Request
-            $capture = new \Genesis\Genesis(
+            $capture = new Genesis(
                 Types::getCaptureTransactionClass($transactionType)
             );
 
@@ -272,7 +285,7 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
             $gatewayResponseObject = $capture->response()->getResponseObject();
 
             $status =
-                $gatewayResponseObject->status == \Genesis\API\Constants\Transaction\States::APPROVED
+                $capture->response()->isApproved()
                     ? \XLite\Model\Payment\Transaction::STATUS_SUCCESS
                     : \XLite\Model\Payment\Transaction::STATUS_FAILED;
 
@@ -316,10 +329,10 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
      * @param \XLite\Model\Payment\BackendTransaction $transaction
      *
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function doBeforeRefund(\XLite\Model\Payment\BackendTransaction $transaction)
     {
-
     }
 
     /**
@@ -341,7 +354,7 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
         $transactionType = $this->getReferenceValue($transaction, self::REF_TYPE);
 
         try {
-            $refund = new \Genesis\Genesis(
+            $refund = new Genesis(
                 Types::getRefundTransactionClass($transactionType)
             );
 
@@ -367,7 +380,7 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
             $gatewayResponseObject = $refund->response()->getResponseObject();
 
             $status =
-                $gatewayResponseObject->status == \Genesis\API\Constants\Transaction\States::APPROVED
+                $refund->response()->isApproved()
                     ? \XLite\Model\Payment\Transaction::STATUS_SUCCESS
                     : \XLite\Model\Payment\Transaction::STATUS_FAILED;
 
@@ -411,10 +424,10 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
      * @param \XLite\Model\Payment\BackendTransaction $transaction
      *
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function doBeforeVoid(\XLite\Model\Payment\BackendTransaction $transaction)
     {
-
     }
 
     /**
@@ -434,7 +447,7 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
         $this->doBeforeVoid($transaction);
 
         try {
-            $void = new \Genesis\Genesis('Financial\Void');
+            $void = new Genesis('Financial\Void');
 
             $void
                 ->request()
@@ -448,7 +461,7 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
             $gatewayResponseObject = $void->response()->getResponseObject();
 
             $status =
-                $gatewayResponseObject->status == \Genesis\API\Constants\Transaction\States::APPROVED
+                $void->response()->isApproved()
                     ? \XLite\Model\Payment\Transaction::STATUS_SUCCESS
                     : \XLite\Model\Payment\Transaction::STATUS_FAILED;
 
@@ -553,12 +566,12 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
      * @param \stdClass $reconcile
      *
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function doProcessCallbackReconciliationObject(
         \XLite\Model\Payment\Transaction $transaction,
         \stdClass $reconcile
     ) {
-
     }
 
     /**
@@ -582,7 +595,7 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
             $this->initLibrary();
 
             try {
-                $notification = new \Genesis\API\Notification($request->getData());
+                $notification = new Notification($request->getData());
 
                 $notification->initReconciliation();
 
@@ -881,22 +894,22 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
     protected function getTransactionStatus($payment)
     {
         switch ($payment->status) {
-            case \Genesis\API\Constants\Transaction\States::APPROVED:
+            case \Genesis\Api\Constants\Transaction\States::APPROVED:
                 $status = \XLite\Model\Payment\Transaction::STATUS_SUCCESS;
                 break;
             default:
-            case \Genesis\API\Constants\Transaction\States::ERROR:
-            case \Genesis\API\Constants\Transaction\States::DECLINED:
+            case \Genesis\Api\Constants\Transaction\States::ERROR:
+            case \Genesis\Api\Constants\Transaction\States::DECLINED:
                 $status = \XLite\Model\Payment\Transaction::STATUS_FAILED;
                 break;
-            case \Genesis\API\Constants\Transaction\States::PENDING:
-            case \Genesis\API\Constants\Transaction\States::PENDING_ASYNC:
-            case \Genesis\API\Constants\Transaction\States::NEW_STATUS:
-            case \Genesis\API\Constants\Transaction\States::IN_PROGRESS:
-            case \Genesis\API\Constants\Transaction\States::USER:
+            case \Genesis\Api\Constants\Transaction\States::PENDING:
+            case \Genesis\Api\Constants\Transaction\States::PENDING_ASYNC:
+            case \Genesis\Api\Constants\Transaction\States::NEW_STATUS:
+            case \Genesis\Api\Constants\Transaction\States::IN_PROGRESS:
+            case \Genesis\Api\Constants\Transaction\States::USER:
                 $status = \XLite\Model\Payment\Transaction::STATUS_PENDING;
                 break;
-            case \Genesis\API\Constants\Transaction\States::VOIDED:
+            case \Genesis\Api\Constants\Transaction\States::VOIDED:
                 $status = \XLite\Model\Payment\Transaction::STATUS_VOID;
                 break;
         }
@@ -1168,6 +1181,7 @@ HTML;
      * $param \XLite\Model\Payment\Method $method
      *
      * @return string
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getCheckoutTemplate(\XLite\Model\Payment\Method $method)
     {
@@ -1190,11 +1204,11 @@ HTML;
 
             static::log('initLibrary()', $error_message);
 
-            throw new \Exception($error_message);
+            throw new Exception($error_message);
         }
 
         // Endpoint
-        \Genesis\Config::setEndpoint(\Genesis\API\Constants\Endpoints::EMERCHANTPAY);
+        \Genesis\Config::setEndpoint(\Genesis\Api\Constants\Endpoints::EMERCHANTPAY);
         // Username
         \Genesis\Config::setUsername($this->getSetting('username'));
         // Password
@@ -1210,8 +1224,8 @@ HTML;
         // Environment
         \Genesis\Config::setEnvironment(
             $this->isTestMode($this->transaction->getPaymentMethod()) ?
-                \Genesis\API\Constants\Environments::STAGING :
-                \Genesis\API\Constants\Environments::PRODUCTION
+                \Genesis\Api\Constants\Environments::STAGING :
+                \Genesis\Api\Constants\Environments::PRODUCTION
         );
     }
 

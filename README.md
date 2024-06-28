@@ -1,13 +1,15 @@
 emerchantpay Gateway Module for X-Cart
 ======================================
 
+[![Software License](https://img.shields.io/badge/license-GPL-green.svg?style=flat)](LICENSE)
+
 This is a Payment Module for X-Cart, that gives you the ability to process payments through emerchantpay's Payment Gateway - Genesis.
 
 Requirements
 ------------
 
 * X-Cart 5.4.x (you can get this plugin to work on older 5.2, 5.3 versions simply by changing the __Major Version__ to ```5.2```, ```5.3``` in ```Main.php``` and ```main.yaml```)
-* [GenesisPHP v1.24.0](https://github.com/GenesisGateway/genesis_php/releases/tag/1.24.0) - (Integrated in Module)
+* [GenesisPHP v2.0.0](https://github.com/GenesisGateway/genesis_php/releases/tag/2.0.0) - (Integrated in Module)
 
 GenesisPHP Requirements
 ------------
@@ -77,7 +79,6 @@ Supported Transactions & Payment Methods
   * __iDeal__
   * __iDebit__
   * __InstaDebit__
-  * __InstantTransfer__
   * __InitRecurringSale__
   * __InitRecurringSale (3D-Secure)__
   * __Intersolve__
@@ -132,5 +133,20 @@ Supported Transactions & Payment Methods
 _Note_: If you have trouble with your credentials or terminal configuration, get in touch with our [support] team
 
 You're now ready to process payments through our gateway.
+
+Development
+------------
+* Install dev packages
+```shell
+composer install
+```
+* Run PHP Code Sniffer
+```shell
+composer php-cs
+```
+* Run PHP Mess Detector
+```shell
+composer php-md
+```
 
 [support]: mailto:tech-support@emerchantpay.net
