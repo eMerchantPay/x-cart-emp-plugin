@@ -61,14 +61,6 @@ class TransactionTypes extends \XLite\View\FormField\Select\Multiple
         // Exclude Transaction Types
         $transactionTypes = array_diff($transactionTypes, $excludedTypes);
 
-        // Add PPRO types
-        $pproTypes = array_map(
-            function ($type) {
-                return $type . Helper::PPRO_TRANSACTION_SUFFIX;
-            },
-            Methods::getMethods()
-        );
-
         // Google Pay Payment Methods
         $googlePayTypes = array_map(
             function ($type) {
@@ -105,7 +97,6 @@ class TransactionTypes extends \XLite\View\FormField\Select\Multiple
 
         $transactionTypes = array_merge(
             $transactionTypes,
-            $pproTypes,
             $googlePayTypes,
             $payPalTypes,
             $applePayTypes

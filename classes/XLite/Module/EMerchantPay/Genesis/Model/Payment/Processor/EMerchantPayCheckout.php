@@ -480,14 +480,7 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
             )
         );
 
-        $pproSuffix = Helper::PPRO_TRANSACTION_SUFFIX;
-        $methods    = Methods::getMethods();
-
-        foreach ($methods as $method) {
-            $aliasMap[$method . $pproSuffix] = Types::PPRO;
-        }
-
-        $aliasMap = array_merge($aliasMap, [
+        $aliasMap = [
             Helper::GOOGLE_PAY_TRANSACTION_PREFIX . Helper::GOOGLE_PAY_PAYMENT_TYPE_AUTHORIZE => Types::GOOGLE_PAY,
             Helper::GOOGLE_PAY_TRANSACTION_PREFIX . Helper::GOOGLE_PAY_PAYMENT_TYPE_SALE      => Types::GOOGLE_PAY,
             Helper::PAYPAL_TRANSACTION_PREFIX     . Helper::PAYPAL_PAYMENT_TYPE_AUTHORIZE     => Types::PAY_PAL,
@@ -495,7 +488,7 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
             Helper::PAYPAL_TRANSACTION_PREFIX     . Helper::PAYPAL_PAYMENT_TYPE_EXPRESS       => Types::PAY_PAL,
             Helper::APPLE_PAY_TRANSACTION_PREFIX  . Helper::APPLE_PAY_PAYMENT_TYPE_AUTHORIZE  => Types::APPLE_PAY,
             Helper::APPLE_PAY_TRANSACTION_PREFIX  . Helper::APPLE_PAY_PAYMENT_TYPE_SALE       => Types::APPLE_PAY,
-        ]);
+        ];
 
         foreach ($selectedTypes as $selectedType) {
             if (array_key_exists($selectedType, $aliasMap)) {
@@ -508,7 +501,6 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
                 $processedList[$transactionType]['parameters'][] = array(
                     $key => str_replace(
                         [
-                            $pproSuffix,
                             Helper::GOOGLE_PAY_TRANSACTION_PREFIX,
                             Helper::PAYPAL_TRANSACTION_PREFIX,
                             Helper::APPLE_PAY_TRANSACTION_PREFIX,
@@ -550,9 +542,6 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
     private function getCustomParameterKey($transactionType)
     {
         switch ($transactionType) {
-            case Types::PPRO:
-                $result = 'payment_method';
-                break;
             case Types::PAY_PAL:
                 $result = 'payment_type';
                 break;

@@ -9,7 +9,7 @@ Requirements
 ------------
 
 * X-Cart 5.4.x (you can get this plugin to work on older 5.2, 5.3 versions simply by changing the __Major Version__ to ```5.2```, ```5.3``` in ```Main.php``` and ```main.yaml```)
-* [GenesisPHP v2.0.0](https://github.com/GenesisGateway/genesis_php/releases/tag/2.0.0) - (Integrated in Module)
+* [GenesisPHP v2.0.1](https://github.com/GenesisGateway/genesis_php/releases/tag/2.0.1) - (Integrated in Module)
 
 GenesisPHP Requirements
 ------------
@@ -74,7 +74,6 @@ Supported Transactions & Payment Methods
   * __eps__
   * __eZeeWallet__
   * __Fashioncheque__
-  * __GiroPay__
   * __Google Pay__
   * __iDeal__
   * __iDebit__
@@ -103,15 +102,6 @@ Supported Transactions & Payment Methods
   * __Pix__
   * __POLi__
   * __Post Finance__
-  * __PPRO__
-    * __eps__
-    * __GiroPay__
-    * __Ideal__
-    * __Przelewy24__
-    * __SafetyPay__
-    * __TrustPay__
-    * __BCMC__
-    * __MyBank__
   * __PSE__
   * __RapiPago__
   * __Redpagos__

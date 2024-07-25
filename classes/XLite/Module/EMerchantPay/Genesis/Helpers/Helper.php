@@ -38,11 +38,6 @@ use Genesis\Api\Constants\Transaction\Parameters\Wallets\PayPal\PaymentTypes as 
 class Helper
 {
     /**
-     * PPRO Transactions Suffix
-     */
-    const PPRO_TRANSACTION_SUFFIX = '_ppro';
-
-    /**
      * Google Pay transaction prefix and methods
      */
     const GOOGLE_PAY_TRANSACTION_PREFIX     = Types::GOOGLE_PAY . '_';
