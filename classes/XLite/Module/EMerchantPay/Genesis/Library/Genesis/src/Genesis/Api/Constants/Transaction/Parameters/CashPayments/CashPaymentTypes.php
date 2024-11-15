@@ -1,5 +1,6 @@
 <?php
-/*
+
+/**
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -18,44 +19,71 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
+ * @author      emerchantpay
+ * @copyright   Copyright (C) 2015-2024 emerchantpay Ltd.
  * @license     http://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Genesis\Api\Constants\Transaction\Parameters\CashPayments;
+
+use Genesis\Utils\Common;
+
 /**
- * Setup the namespaces and class loaders
+ * Class CashTransactionTypes
  *
- * @class GenesisAutoLoader
+ * @package Genesis\Api\Constants\Transaction\Parameters\CashPayments
  */
-class GenesisAutoLoader
+class CashPaymentTypes
 {
-    private static $loader;
+    /**
+     * 7 Eleven
+     *
+     * @var string
+     */
+    const SEVEN_ELEVEN = 'seven_eleven';
 
-    public static function loadClassLoader($class)
+    /**
+     * Bancomer
+     *
+     * @var string
+     */
+    const BANCOMER = 'bancomer';
+
+    /**
+     * Farmacias del Dr. Ahorro
+     *
+     * @var string
+     */
+    const PHARMACIES_DEL_DR_AHORRO = 'pharmacies_del_dr_ahorro';
+
+    /**
+     * Farmacias Santa Maria
+     *
+     * @var string
+     */
+    const PHARMACIES_SANTA_MARIA = 'pharmacies_santa_maria';
+
+    /**
+     * OXXO
+     *
+     * @var string
+     */
+    const OXXO = 'oxxo';
+
+    /**
+     * Scotiabank
+     *
+     * @var string
+     */
+    const SCOTIABANK = 'scotiabank';
+
+    /**
+     * Get all Cash Transaction Types
+     *
+     * @return array
+     */
+    public static function getAll()
     {
-        if ('Composer\Autoload\ClassLoader' === $class) {
-            if (!class_exists('\Composer\Autoload\ClassLoader')) {
-                require __DIR__ . DIRECTORY_SEPARATOR . 'ClassLoader.php';
-            }
-        }
-    }
-
-    public static function getLoader()
-    {
-        if (null !== self::$loader) {
-            return self::$loader;
-        }
-
-        spl_autoload_register(array('GenesisAutoLoader', 'loadClassLoader'), true, true);
-        self::$loader = $loader = new \Composer\Autoload\ClassLoader();
-        spl_autoload_unregister(array('GenesisAutoLoader', 'loadClassLoader'));
-
-        $map = require __DIR__ . '/autoload_namespaces.php';
-        foreach ($map as $namespace => $path) {
-            $loader->set($namespace, $path);
-        }
-
-        $loader->register(true);
-
-        return $loader;
+        return Common::getClassConstants(self::class);
     }
 }

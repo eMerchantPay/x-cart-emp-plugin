@@ -1,5 +1,6 @@
 <?php
-/*
+
+/**
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -18,44 +19,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
+ * @author      emerchantpay
+ * @copyright   Copyright (C) 2015-2024 emerchantpay Ltd.
  * @license     http://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Genesis\Api\Constants\Financial\Alternative\Invoice;
+
+use Genesis\Utils\Common;
+
 /**
- * Setup the namespaces and class loaders
+ * Class PaymentTypes
  *
- * @class GenesisAutoLoader
+ * @package Genesis\Api\Constants\Financial\Alternative\Invoice
  */
-class GenesisAutoLoader
+class PaymentTypes
 {
-    private static $loader;
+    /**
+     * Payment provider type: Klarna
+     */
+    const KLARNA = 'klarna';
 
-    public static function loadClassLoader($class)
+    /**
+     * Payment provider type: Secure Invoice
+     */
+    const SECURE_INVOICE = 'secure_invoice';
+
+    /**
+     * Retrieve all constants
+     *
+     * @return array
+     */
+    public static function getAll()
     {
-        if ('Composer\Autoload\ClassLoader' === $class) {
-            if (!class_exists('\Composer\Autoload\ClassLoader')) {
-                require __DIR__ . DIRECTORY_SEPARATOR . 'ClassLoader.php';
-            }
-        }
-    }
-
-    public static function getLoader()
-    {
-        if (null !== self::$loader) {
-            return self::$loader;
-        }
-
-        spl_autoload_register(array('GenesisAutoLoader', 'loadClassLoader'), true, true);
-        self::$loader = $loader = new \Composer\Autoload\ClassLoader();
-        spl_autoload_unregister(array('GenesisAutoLoader', 'loadClassLoader'));
-
-        $map = require __DIR__ . '/autoload_namespaces.php';
-        foreach ($map as $namespace => $path) {
-            $loader->set($namespace, $path);
-        }
-
-        $loader->register(true);
-
-        return $loader;
+        return array_values(Common::getClassConstants(self::class));
     }
 }

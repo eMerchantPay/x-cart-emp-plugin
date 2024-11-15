@@ -1,7 +1,7 @@
 {
     "name": "emerchantpay/xcart-emerchantpay-plugin",
     "description": "emerchantpay Gateway Module for X-Cart",
-    "version": "5.4.3.7",
+    "version": "5.4.4.0",
     "license": "GPL-2.0",
     "authors": [
         {

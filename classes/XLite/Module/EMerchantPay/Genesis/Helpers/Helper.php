@@ -20,10 +20,13 @@
 namespace XLite\Module\EMerchantPay\Genesis\Helpers;
 
 use Genesis\Api\Constants\Banks;
+use Genesis\Api\Constants\Financial\Alternative\Transaction\ItemTypes;
 use Genesis\Api\Constants\i18n;
 use Genesis\Api\Constants\Transaction\Types;
-use Genesis\Api\Request\Financial\Alternatives\Klarna\Item as KlarnaItem;
-use Genesis\Api\Request\Financial\Alternatives\Klarna\Items;
+use Genesis\Api\Request\Financial\Alternatives\Transaction\Item as InvoiceItem;
+use Genesis\Api\Request\Financial\Alternatives\Transaction\Items as InvoiceItems;
+use Genesis\Exceptions\ErrorParameter;
+use Genesis\Exceptions\InvalidArgument;
 use XLite\Model\Order;
 use XLite\Model\OrderItem;
 use XLite\Module\CDev\Paypal\Core\Api\Orders\Item;
@@ -162,64 +165,64 @@ class Helper
     }
 
     /**
-     * Retrieve the list Klarna Items
+     * Retrieve the list Invoice Items
      *
      * @param Order $order
-     * @return Items
-     * @throws \Genesis\Exceptions\ErrorParameter
+     *
+     * @return InvoiceItems
+     *
+     * @throws ErrorParameter
+     * @throws InvalidArgument
      */
-    public static function getKlarnaCustomParamItems(Order $order)
+    public static function getInvoiceCustomParamItems(Order $order)
     {
-        $items     = new Items($order->getCurrency()->getCode());
+        $items = new InvoiceItems();
+        $items->setCurrency($order->getCurrency()->getCode());
+
         $itemsList = $order->getItems();
 
         /** @var OrderItem $item */
         foreach ($itemsList as $item) {
-            $klarnaItem = new KlarnaItem(
-                $item->getName(),
-                $item->isShippable() ?
-                    KlarnaItem::ITEM_TYPE_PHYSICAL :
-                    KlarnaItem::ITEM_TYPE_DIGITAL,
-                $item->getAmount(),
-                $item->getPrice()
-            );
-            $items->addItem($klarnaItem);
+            $invoiceItem = new InvoiceItem();
+            $invoiceItem
+                ->setName($item->getName())
+                ->setItemType($item->isShippable() ? ItemTypes::PHYSICAL : ItemTypes::DIGITAL)
+                ->setQuantity($item->getAmount())
+                ->setUnitPrice($item->getPrice());
+            $items->addItem($invoiceItem);
         }
 
         $taxes = floatval($order->getSurchargesSubtotal(self::XCART_SURCHARGE_TAX));
         if ($taxes) {
-            $items->addItem(
-                new KlarnaItem(
-                    'Taxes',
-                    KlarnaItem::ITEM_TYPE_SURCHARGE,
-                    1,
-                    $taxes
-                )
-            );
+            $invoiceItem = new InvoiceItem();
+            $invoiceItem
+                ->setName('Taxes')
+                ->setItemType(ItemTypes::SURCHARGE)
+                ->setQuantity(1)
+                ->setUnitPrice($taxes);
+            $items->addItem($invoiceItem);
         }
 
         $discount = floatval($order->getSurchargesSubtotal(self::XCART_SURCHARGE_DISCOUNT));
         if ($discount) {
-            $items->addItem(
-                new KlarnaItem(
-                    'Discount',
-                    KlarnaItem::ITEM_TYPE_DISCOUNT,
-                    1,
-                    -$discount
-                )
-            );
+            $invoiceItem = new InvoiceItem();
+            $invoiceItem
+                ->setName('Discount')
+                ->setItemType(ItemTypes::DISCOUNT)
+                ->setQuantity(1)
+                ->setUnitPrice(-$discount);
+            $items->addItem($invoiceItem);
         }
 
         $shipping_cost = floatval($order->getSurchargesSubtotal(self::XCART_SURCHARGE_SHOPPING));
         if ($shipping_cost) {
-            $items->addItem(
-                new KlarnaItem(
-                    'Shipping Costs',
-                    KlarnaItem::ITEM_TYPE_SHIPPING_FEE,
-                    1,
-                    $shipping_cost
-                )
-            );
+            $invoiceItem = new InvoiceItem();
+            $invoiceItem
+                ->setName('Shipping Costs')
+                ->setItemType(ItemTypes::SHIPPING_FEE)
+                ->setQuantity(1)
+                ->setUnitPrice($shipping_cost);
+            $items->addItem($invoiceItem);
         }
 
         return $items;

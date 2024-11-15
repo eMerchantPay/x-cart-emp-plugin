@@ -217,7 +217,9 @@ class ThreedsHelper
         }
 
         $searchCondition->{\XLite\Model\Repo\Order::P_PROFILE_ID}          = Helper::getCurrentUserId();
-        $searchCondition->{\XLite\Model\Repo\Order::P_PAYMENT_METHOD_NAME} = EMerchantPayCheckout::PAYMENT_METHOD_NAME;
+        // Plugin Generation style fix
+        $searchCondition->{\XLite\Model\Repo\Order::P_PAYMENT_METHOD_NAME} =
+            EMerchantPayCheckout::PAYMENT_METHOD_NAME;
 
         if ($period == self::ACTIVITY_6_MONTHS) {
             $paidStatus = \XLite\Model\Order\Status\Payment::getPaidStatuses();
@@ -238,7 +240,9 @@ class ThreedsHelper
     {
         $searchCondition                                                   = new CommonCell();
         $searchCondition->{\XLite\Model\Repo\Order::P_PROFILE_ID}          = Helper::getCurrentUserId();
-        $searchCondition->{\XLite\Model\Repo\Order::P_PAYMENT_METHOD_NAME} = EMerchantPayCheckout::PAYMENT_METHOD_NAME;
+        // Plugin Generation style fix
+        $searchCondition->{\XLite\Model\Repo\Order::P_PAYMENT_METHOD_NAME} =
+            EMerchantPayCheckout::PAYMENT_METHOD_NAME;
         $searchCondition->{\XLite\Model\Repo\AttributeOption::P_ORDER_BY}  = ['o.date', 'ASC'];
 
         return \XLite\Core\Database::getRepo('XLite\Model\Order')->search($searchCondition);

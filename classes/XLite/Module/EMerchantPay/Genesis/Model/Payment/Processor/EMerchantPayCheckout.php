@@ -202,8 +202,8 @@ class EMerchantPayCheckout extends \XLite\Module\EMerchantPay\Genesis\Model\Paym
                     )
                 );
                 break;
-            case \Genesis\Api\Constants\Transaction\Types::KLARNA_AUTHORIZE:
-                $parameters = Helper::getKlarnaCustomParamItems(
+            case \Genesis\Api\Constants\Transaction\Types::INVOICE:
+                $parameters = Helper::getInvoiceCustomParamItems(
                     $this->transaction->getOrder()
                 )->toArray();
                 break;

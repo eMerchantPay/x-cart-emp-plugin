@@ -272,11 +272,11 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
                     ->setAmount($this->getFormattedPrice($transaction->getValue()))
                     ->setCurrency($transaction->getPaymentTransaction()->getOrder()->getCurrency()->getCode());
 
-            if ($transactionType === Types::KLARNA_AUTHORIZE) {
+            if ($transactionType === Types::INVOICE) {
                 $capture
                     ->request()
                     ->setItems(
-                        Helper::getKlarnaCustomParamItems($transaction->getPaymentTransaction()->getOrder())
+                        Helper::getInvoiceCustomParamItems($transaction->getPaymentTransaction()->getOrder())
                     );
             }
 
@@ -367,11 +367,11 @@ abstract class AEMerchantPay extends \XLite\Model\Payment\Base\Online
                     ->setAmount($this->getFormattedPrice($transaction->getValue()))
                     ->setCurrency($transaction->getPaymentTransaction()->getOrder()->getCurrency()->getCode());
 
-            if ($transactionType === Types::KLARNA_CAPTURE) {
+            if ($transactionType === Types::INVOICE_CAPTURE) {
                 $refund
                     ->request()
                     ->setItems(
-                        Helper::getKlarnaCustomParamItems($transaction->getPaymentTransaction()->getOrder())
+                        Helper::getInvoiceCustomParamItems($transaction->getPaymentTransaction()->getOrder())
                     );
             }
 

@@ -1,5 +1,6 @@
 <?php
-/*
+
+/**
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -18,44 +19,52 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
+ * @author      emerchantpay
+ * @copyright   Copyright (C) 2015-2024 emerchantpay Ltd.
  * @license     http://opensource.org/licenses/MIT The MIT License
  */
 
-/**
- * Setup the namespaces and class loaders
- *
- * @class GenesisAutoLoader
- */
-class GenesisAutoLoader
-{
-    private static $loader;
+namespace Genesis\Api\Traits\Request\Financial\Alternatives\Invoice;
 
-    public static function loadClassLoader($class)
+use Genesis\Exceptions\ErrorParameter;
+
+/**
+ * Trait Items
+ *
+ * @package Genesis\Api\Traits\Request\Financial\Alternatives\Invoice
+ */
+trait InvoiceValidation
+{
+    /**
+     * Common items validation
+     *
+     * @return void
+     *
+     * @throws ErrorParameter
+     */
+    public function validateItems()
     {
-        if ('Composer\Autoload\ClassLoader' === $class) {
-            if (!class_exists('\Composer\Autoload\ClassLoader')) {
-                require __DIR__ . DIRECTORY_SEPARATOR . 'ClassLoader.php';
-            }
+        // verify there is at least one item added
+        if (empty($this->items) || $this->items->count() === 0) {
+            throw new ErrorParameter('Empty (null) required parameter: items');
         }
+
+        $this->items->validate();
     }
 
-    public static function getLoader()
+    /**
+     * Validate the amount
+     *
+     * @return void
+     *
+     * @throws ErrorParameter
+     */
+    public function validateAmount()
     {
-        if (null !== self::$loader) {
-            return self::$loader;
+        if ((float)$this->amount !== (float)$this->items->getAmount()) {
+            throw new ErrorParameter(
+                'Amount must be equal to the sum of the items amount'
+            );
         }
-
-        spl_autoload_register(array('GenesisAutoLoader', 'loadClassLoader'), true, true);
-        self::$loader = $loader = new \Composer\Autoload\ClassLoader();
-        spl_autoload_unregister(array('GenesisAutoLoader', 'loadClassLoader'));
-
-        $map = require __DIR__ . '/autoload_namespaces.php';
-        foreach ($map as $namespace => $path) {
-            $loader->set($namespace, $path);
-        }
-
-        $loader->register(true);
-
-        return $loader;
     }
 }
