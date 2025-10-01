@@ -9,7 +9,7 @@ Requirements
 ------------
 
 * X-Cart 5.4.x (you can get this plugin to work on older 5.2, 5.3 versions simply by changing the __Major Version__ to ```5.2```, ```5.3``` in ```Main.php``` and ```main.yaml```)
-* [GenesisPHP v2.1.2](https://github.com/GenesisGateway/genesis_php/releases/tag/2.1.2) - (Integrated in Module)
+* [GenesisPHP v2.2.0](https://github.com/GenesisGateway/genesis_php/releases/tag/2.2.0) - (Integrated in Module)
 
 GenesisPHP Requirements
 ------------
@@ -61,10 +61,8 @@ Supported Transactions & Payment Methods
   * __Bancomer__
   * __Bancontact__
   * __Banco de Occidente__
-  * __Banco do Brasil__
   * __BitPay__
   * __Boleto__
-  * __Bradesco__
   * __Cabal__
   * __CashU__
   * __Cencosud__
@@ -81,7 +79,6 @@ Supported Transactions & Payment Methods
   * __InitRecurringSale__
   * __InitRecurringSale (3D-Secure)__
   * __Intersolve__
-  * __Itau__
   * __Multibanco__
   * __MyBank__
   * __Naranja__
@@ -103,13 +100,10 @@ Supported Transactions & Payment Methods
   * __Pix__
   * __POLi__
   * __Post Finance__
-  * __PSE__
   * __RapiPago__
-  * __Redpagos__
   * __SafetyPay__
   * __Sale__
   * __Sale (3D-Secure)__
-  * __Santander__
   * __Sepa Direct Debit__
   * __SOFORT__
   * __Tarjeta Shopping__
@@ -118,7 +112,6 @@ Supported Transactions & Payment Methods
   * __TrustPay__
   * __UPI__
   * __WebMoney__
-  * __WebPay__
   * __WeChat__
 
 _Note_: If you have trouble with your credentials or terminal configuration, get in touch with our [support] team
